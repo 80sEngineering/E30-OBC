@@ -1,1 +1,1 @@
-{"auto_off_delay": 4, "language": "FR", "auto-off_delay": 9, "sensors_nb": 1, "odometer": 1, "g_error": [0, 0], "clock_format": 24, "display_brightness": 10, "backlight_brightness": 15, "current_time": [2024, 11, 26, 1, 10, 7, 52, 0], "unit": "METRIC"}
+{"auto_off_delay": 4, "language": "FR", "auto-off_delay": 9, "backlight_brightness": 15, "current_time": [2024, 11, 26, 1, 19, 15, 5, 0], "g_error": [0, 0], "clock_format": 24, "display_brightness": 10, "unit": "METRIC", "odometer": 1, "sensors_nb": 1}

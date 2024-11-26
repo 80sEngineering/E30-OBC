@@ -1,5 +1,5 @@
 import uasyncio, os, time
-from FOTA import logging
+import logging
 
 _routes = []
 catchall_handler = None

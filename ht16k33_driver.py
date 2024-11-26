@@ -1,6 +1,6 @@
 from micropython import const
 import framebuf
- 
+import logging
   
 # Ordre : 0 DP N M L K J H G2 G1 F E D C B A
 
@@ -153,6 +153,7 @@ class HT16K33:
             self._blink_rate = rate
             self._write_cmd(_HT16K33_BLINK_CMD |
                             _HT16K33_BLINK_DISPLAYON | rate << 1)
+            
     def brightness(self, brightness=None):
         if brightness is None:
             return self._brightness
@@ -161,7 +162,8 @@ class HT16K33:
         if brightness != self._brightness:
             self._brightness = brightness
             self._write_cmd(_HT16K33_CMD_BRIGHTNESS | brightness)
-            
+        logging.info(f"> Brightness set to {brightness}")
+        
     def show(self):
         self.i2c.writeto_mem(self.address, 0x00, self.buffer)
 

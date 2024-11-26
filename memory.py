@@ -1,5 +1,5 @@
 import ujson as json
-
+import logging
 def access_data(data_type, data_to_write = None):
     try:
         with open('data.json', 'r') as file:
@@ -7,7 +7,7 @@ def access_data(data_type, data_to_write = None):
             result = data[data_type]
             file.close()
     except:
-        print('Data',data_type,'not found')
+        logging.error(f"> Data {data_type} not found")
         return False
 
     if not data_to_write:

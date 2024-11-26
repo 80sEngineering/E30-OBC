@@ -1,5 +1,4 @@
 import time
-from sys import print_exception
 from math import log
 import ht16k33_driver
 from GPS_parser import GPS_handler
@@ -11,10 +10,11 @@ from machine import I2C, Pin, RTC, ADC, lightsleep, WDT, PWM
 from timer import Timer, LapTimer
 import ujson as json
 from memory import access_data
-from micropython import const
 import fota_master
 from FOTA import connect_to_wifi, is_connected_to_wifi, server
+from FOTA.ota import OTAUpdater
 import os
+import logging
 
 
 class OBC:
@@ -80,6 +80,7 @@ class OBC:
         self.priority_counter = 0
         self.priority_interval = [1,20,40]
         #self.watchdog = WDT(timeout=5000)
+        logging.info('> System initialized')
         self.loop()
     
     def init_i2c(self):
@@ -103,9 +104,8 @@ class OBC:
 
             elif button_id == 2:
                 self.displayed_function = self.speed
-                """
-                
-            """
+
+
             elif button_id == 3:
                 self.displayed_function = self.acceleration
                 
@@ -152,8 +152,10 @@ class OBC:
                     self.displayed_function = self.altitude
                 else:
                     self.displayed_function = self.g_sensor
-
-        print(self.displayed_function.__name__)
+        else:
+            logging.debug("Switching function not allowed")
+            
+        logging.info(f"> Displayed function: {self.displayed_function.__name__}")
 
     def digit_manager(self, button_id, long_press):
         self.last_use = time.ticks_ms()
@@ -164,7 +166,7 @@ class OBC:
             else:
                 digit_map = {10: -1000, 11: -100, 12: -10,13:-1}
                 self.digit_pressed = digit_map.get(button_id)
-            print(self.digit_pressed)
+            logging.info(f"> Pressed digit: {self.digit_pressed}")
         else:
             if (button_id == 10 and not self.button12.pin.value()) or (button_id == 12 and not self.button10.pin.value()):
                 self.displayed_function = self.set_setting
@@ -277,14 +279,12 @@ class OBC:
                     pass
                
             elif self.displayed_function.__name__ == 'sw_update':
-                self.can_switch_function = True
                 fota_master.machine_reset()
-                self.displayed_function = self.set_setting
                 
             elif self.displayed_function.__name__ in ['set_language','set_clock_format','set_unit','set_display_brightness','set_sensors_nb','set_auto_off','set_backlight_brightness','set_gsensor_error']:
                 self.displayed_function = self.set_setting
             
-            print(self.displayed_function.__name__)
+            logging.info(f"> Displayed function: {self.displayed_function.__name__}")
        
         else:
             if self.can_switch_function:
@@ -477,6 +477,8 @@ class OBC:
                 current_speed = self.gps.parsed.speed[self.unit.speed_index]
                 gone_overspeed = False
                 switching = True
+                if current_speed > self.speed_limit and self.speed_limit_is_active:
+                    logging.car("> Entering overspeed at {current_speed}")
                 while current_speed > self.speed_limit and self.speed_limit_is_active:
                     self.watchdog.feed()
                     self.displayed_function = self.check_for_overspeed
@@ -515,10 +517,13 @@ class OBC:
                     if acceleration.x > 0.5 and self.gps.parsed.speed[2] < 2:
                         self.acceleration_timer.start()
                 else:
-                    if self.gps.parsed.speed[2] >= 100 and self.acceleration_timer.is_running:
+                    speed_target = 100 #kmh
+                    if self.gps.parsed.speed[2] >= speed_target and self.acceleration_timer.is_running:
                         self.acceleration_timer.display_end_time = time.ticks_add(time.ticks_ms(),4000)
                         self.display.blink_rate(5)
                         self.can_switch_function = False
+                        time_to_100 = self.acceleration_timer.parse_time(self.acceleration_timer.get_elapsed_time())
+                        logging.car(f"> {speed_target}kmh reached in {time_to_100}.")
                         self.acceleration_timer.reset()
                     if self.acceleration_timer.show_lap_time():
                         pass
@@ -526,7 +531,6 @@ class OBC:
                         time_to_show = self.acceleration_timer.get_elapsed_time()
                         self.show(self.acceleration_timer.parse_time(time_to_show))
                     
-
             else:
                 self.show(self.words['SIGNAL'])
 
@@ -706,6 +710,7 @@ class OBC:
         try:
             temperature = 1 /( A + B * log(RNTC) + C *(log(RNTC))**3)
         except:
+            logging.exception(f"> Error while computing temperature. RNTC value: {RNTC}")
             temperature = 222
         celsius_temperature = temperature - 273.15
         fahrenheit_temperature = (celsius_temperature *  1.8) + 32
@@ -731,7 +736,7 @@ class OBC:
             try:
                 self.refresh_rate_adjuster['values'].append(self.get_temperature(False))
             except MemoryError:
-                pass
+                logging.exception(f"> MemoryError in self.refresh_rate_updater. Array lenght: {len(self.refresh_rate_adjuster['values'])}") 
             
             if time.ticks_diff(time.ticks_ms(), self.refresh_rate_adjuster['timestamp']) > 1000:
                 if len(self.refresh_rate_adjuster['values']) > 2:
@@ -762,6 +767,8 @@ class OBC:
             temperature = int(self.get_temperature(False))
             switching = True
             gone_overheat = False
+            if temperature > self.max_temperature and self.temperature_limit_is_active:
+                logging.car(f"> Oil overheating! Temperature: {temperature}")
             while temperature > self.max_temperature and self.temperature_limit_is_active:
                 self.watchdog.feed()
                 self.displayed_function = self.check_for_overheat
@@ -780,6 +787,7 @@ class OBC:
                     pass
                 temperature = int(self.get_temperature(False))
             if gone_overheat:
+                logging.car("> Stopped overheating.")
                 self.display.blink_rate(0)
                 self.can_switch_function = True
                 self.displayed_function = self.temperature
@@ -899,31 +907,62 @@ class OBC:
         else:
             self.show(' WIFI ')
             self.can_switch_function = False
-            
-            os.stat("wifi.json")
-            with open("wifi.json") as f:
-                wifi_current_attempt = 1
-                wifi_credentials = json.load(f)
-                
+            try:
+                os.stat("wifi.json")
+                with open("wifi.json", 'r') as f:
+                    wifi_current_attempt = 1
+                    wifi_credentials = json.load(f)
+                    
                 while (wifi_current_attempt < 3):
                     try:
                         ip_address = connect_to_wifi(wifi_credentials["ssid"], wifi_credentials["password"])
                     except:
-                        pass
+                        logging.exception('> Exception occured while connecting to wifi.')
                     if is_connected_to_wifi():
-                        print(f"Connected to wifi, IP address {ip_address}")
+                        logging.debug(f"> Connected to wifi, IP address {ip_address}")
+                        self.show('CNNCTD')
+                        time.sleep(2)
                         self.show(wifi_credentials["ssid"][:6])
+                        time.sleep(2)
                         break
                     else:
                         wifi_current_attempt += 1
-                        
-                if is_connected_to_wifi():
-                    fota_master.application_mode()
-                else:
-                    print('Something went wrong, going into setup mode.')
-                    fota_master.setup_mode()
+            
+            except OSError:
+                logging.debug("> OSError occured as wifi.json doesn't exist")
+                with open('wifi.json', 'w') as f:
+                    json.dump({}, f)
                 
-                server.run()
+            if is_connected_to_wifi():
+                logging.debug("> Entering update mode.")
+                firmware_url = "https://raw.githubusercontent.com/80sEngineering/MeshCataloger/"
+                ota_updater = OTAUpdater(firmware_url, "Viewer.py")
+                ota_updater.check_for_updates()
+                if ota_updater.newer_version_available:
+                    self.show('NEW'+'{:>3}'.format('V'+str(ota_updater.latest_version)))
+                    time.sleep(2)
+                    self.show('UPDATE')
+                    time.sleep(2)
+                    self.display.clear()
+                    self.display.show()
+                    if ota_updater.fetch_latest_code():
+                        ota_updater.update_no_reset() 
+                        ota_updater.update_and_reset()
+                else:
+                    logging.debug("> No new updates available.")
+                    self.show('LATEST')
+                    time.sleep(2)
+                    self.show('VERS.'+'{:>2}'.format(str(ota_updater.current_version)))
+                    time.sleep(2)
+                    self.display.clear()
+                    self.display.show()
+                    fota_master.machine_reset()
+                    
+            else:
+                logging.debug(f"> Something went wrong, going into setup mode.")
+                fota_master.setup_mode()
+            
+            server.run()
 
             
     def set_display_brightness(self):
@@ -1023,10 +1062,12 @@ class OBC:
     def power_handler(self):
         self.powered = not self.powered
         if self.powered:
+            logging.debug("System powered on")
             self.pwr_pin.high()
             self.init_i2c()
             self.led.high()
         else:
+            logging.debug("System powered off")
             self.display.clear()
             self.display.show()
             time.sleep_ms(50)
@@ -1038,6 +1079,7 @@ class OBC:
         auto_off_delay = auto_off_delay * 60 * 60 * 1000
         access_data("current_time",self.rtc.datetime())
         if time.ticks_diff(time.ticks_ms(),self.last_use) > auto_off_delay:
+            logging.debug(f"No activity for {auto_off_delay}ms")
             self.power_handler()
         
     def loop(self):

@@ -9,6 +9,7 @@ from math import floor, modf, radians , sin , cos , acos
 from machine import UART
 from memory import access_data
 import utime
+import logging
 
 class GPS_handler:
     def __init__(self):
@@ -165,7 +166,7 @@ class MicropyGPS(object):
         try:
             self.log_handle = open(target_file, mode_code)
         except AttributeError:
-            print("Invalid FileName")
+            logging.error(f"> Invalid FileName")
             return False
 
         self.log_en = True
@@ -178,7 +179,7 @@ class MicropyGPS(object):
         try:
             self.log_handle.close()
         except AttributeError:
-            print("Invalid Handle")
+            logging.error(f"> Invalid Handle")
             return False
 
         self.log_en = False

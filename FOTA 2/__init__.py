@@ -7,7 +7,7 @@ import gc, os, machine
 gc.threshold(50000)
 
 # phew! the Pico (or Python) HTTP Endpoint Wrangler
-from FOTA import logging
+import logging
 
 # determine if remotely mounted or not, changes some behaviours like
 # logging truncation

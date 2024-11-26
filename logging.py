@@ -2,12 +2,13 @@ import machine, os, gc
 
 log_file = "log.txt"
 
-LOG_INFO = 0b00001
-LOG_WARNING = 0b00010
-LOG_ERROR = 0b00100
-LOG_DEBUG = 0b01000
-LOG_EXCEPTION = 0b10000
-LOG_ALL = LOG_INFO | LOG_WARNING | LOG_ERROR | LOG_DEBUG | LOG_EXCEPTION
+LOG_INFO = 0b000001
+LOG_WARNING = 0b000010
+LOG_ERROR = 0b000100
+LOG_DEBUG = 0b001000
+LOG_EXCEPTION = 0b010000
+LOG_CAR = 0b100000
+LOG_ALL = LOG_INFO | LOG_WARNING | LOG_ERROR | LOG_DEBUG | LOG_EXCEPTION | LOG_CAR
 
 _logging_types = LOG_ALL
 
@@ -109,3 +110,7 @@ def debug(*items):
 def exception(*items):
   if _logging_types & LOG_EXCEPTION:
     log("exception", " ".join(map(str, items)))
+
+def car(*items):
+  if _logging_types & LOG_CAR:
+    log("car", " ".join(map(str, items)))    

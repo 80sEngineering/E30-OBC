@@ -1,5 +1,6 @@
 import time
 import math
+import logging
 
 class Timer:
     def __init__(self):
@@ -31,6 +32,7 @@ class Timer:
         self.lap_start = None
         
     def lap(self):
+        logging.info(f"> Lap")
         now = time.ticks_ms()
         if self.lap_start is None:
             self.lap_start = now
@@ -87,7 +89,7 @@ class LapTimer(Timer):
             
     def set_start_position(self,gps_data):
         self.start_position = {'latitude':gps_data.latitude[0],'longitude':gps_data.longitude[0],'course':gps_data.course,'timestamp':gps_data.timestamp}
-        
+        logging.car(f"> Starting position: {self.start_position}")
         
     def convert_to_local_coordinates(self, latitude, longitude):
         delta_latitude = latitude - self.start_position['latitude']
@@ -120,6 +122,7 @@ class LapTimer(Timer):
         
     def has_completed_lap(self):
         finish_time = self.previous_update['timestamp']
+        logging.car(f"> Lap completed at {finish_time}.")
         if self.number_of_lap == 1:
             self.lap_time = time.ticks_diff(finish_time, self.start_time)
             self.fastest_lap = [self.lap_time,1]
@@ -173,6 +176,7 @@ class LapTimer(Timer):
             
             
     def end(self):
+        logging.info("> Timer ended")
         now = time.ticks_ms()
         self.is_running = False
         if self.number_of_lap > 1:
@@ -180,6 +184,7 @@ class LapTimer(Timer):
             self.display_end_time = time.ticks_add(now, 8000)
     
     def reset_laptimer(self):
+        logging.info("> Timer reset")
         self.reset()
         self.start_time = None
         self.start_position = None

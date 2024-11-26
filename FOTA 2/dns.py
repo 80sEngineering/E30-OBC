@@ -1,5 +1,5 @@
 import uasyncio, usocket
-from FOTA import logging
+import logging
 
 async def _handler(socket, ip_address):
   while True:

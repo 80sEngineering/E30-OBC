@@ -1,106 +1,152 @@
-con.ico (404 Not Found) [558ms]
-2024-03-21 06:53:37 [debug    /  51kB] > parsed template: FOTA/ap_templates/styles.html (took 57 ms)
-2024-03-21 06:53:37 [debug    /  44kB] > parsed template: FOTA/ap_templates/index.html (took 249 ms)
-2024-03-21 06:53:37 [info     /  42kB] > GET / (200 OK) [852ms]
-2024-03-21 06:53:42 [debug    /  50kB] > parsed template: FOTA/ap_templates/styles.html (took 1772 ms)
-2024-03-21 06:53:42 [debug    /  42kB] > parsed template: FOTA/ap_templates/index.html (took 1867 ms)
-2024-03-21 06:53:42 [info     /  40kB] > GET / (200 OK) [2048ms]
-2024-03-21 06:53:42 [info     /  72kB] > GET /favicon.ico (404 Not Found) [2152ms]
-2024-03-21 06:53:43 [debug    /  56kB] > parsed template: FOTA/ap_templates/redirect.html (took 42 ms)
-2024-03-21 06:53:43 [info     /  54kB] > GET / (200 OK) [357ms]
-2024-03-21 06:53:43 [debug    /  52kB] > parsed template: FOTA/ap_templates/redirect.html (took 131 ms)
-2024-03-21 06:53:43 [info     /  50kB] > GET / (200 OK) [461ms]
-2024-03-21 06:53:57 [debug    /  60kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:53:57 [info     /  58kB] > GET / (200 OK) [92ms]
-2024-03-21 06:53:58 [debug    /  48kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:53:58 [info     /  46kB] > GET / (200 OK) [290ms]
-2024-03-21 06:54:08 [debug    /  37kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:54:08 [info     /  35kB] > GET / (200 OK) [100ms]
-2024-03-21 06:54:13 [debug    /  60kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
-2024-03-21 06:54:13 [info     /  58kB] > GET / (200 OK) [185ms]
-2024-03-21 06:54:38 [debug    /  35kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:54:38 [info     /  33kB] > GET / (200 OK) [95ms]
-2024-03-21 06:54:46 [debug    /  49kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
-2024-03-21 06:54:46 [info     /  46kB] > GET / (200 OK) [101ms]
-2024-03-21 06:55:08 [debug    /  33kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:55:08 [info     /  30kB] > GET / (200 OK) [99ms]
-2024-03-21 06:55:18 [debug    /  61kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:55:18 [info     /  59kB] > GET / (200 OK) [122ms]
-2024-03-21 06:52:48 [debug    /  91kB]   - got ip address
-2024-03-21 06:52:58 [info     /  88kB] > starting catch all dns server on port 53
-2024-03-21 06:52:58 [info     /  85kB] > starting web server on port 80
-2024-03-21 06:52:58 [debug    /  95kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
-2024-03-21 06:52:58 [info     /  93kB] > GET / (200 OK) [121ms]
-2024-03-21 06:53:04 [debug    /  66kB] > parsed template: FOTA/ap_templates/redirect.html (took 10 ms)
-2024-03-21 06:53:04 [info     /  64kB] > GET / (200 OK) [179ms]
-2024-03-21 06:52:57 [debug    /  81kB]   - connecting
-2024-03-21 06:53:00 [debug    /  79kB]   - connecting
-2024-03-21 06:53:02 [info     /  99kB] > starting catch all dns server on port 53
-2024-03-21 06:53:02 [info     /  97kB] > starting web server on port 80
-2024-03-21 06:53:04 [debug    /  85kB]   - got ip address
-2024-03-21 06:53:14 [info     /  81kB] > starting catch all dns server on port 53
-2024-03-21 06:53:14 [info     / 102kB] > starting web server on port 80
-2024-03-21 06:53:30 [debug    /  88kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:53:31 [info     /  85kB] > GET / (200 OK) [183ms]
-2024-03-21 06:53:31 [debug    /  73kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:53:32 [info     /  71kB] > GET / (200 OK) [112ms]
-2024-03-21 06:53:32 [info     /  63kB] > GET /configure (404 Not Found) [25ms]
-2024-03-21 06:53:38 [info     /  92kB] > GET /configure (404 Not Found) [80ms]
-2024-03-21 06:53:43 [debug    /  83kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
-2024-03-21 06:53:43 [info     /  81kB] > GET / (200 OK) [113ms]
-2024-03-21 06:53:43 [debug    /  53kB] > parsed template: FOTA/ap_templates/styles.html (took 57 ms)
-2024-03-21 06:53:43 [debug    /  47kB] > parsed template: FOTA/ap_templates/index.html (took 203 ms)
-2024-03-21 06:53:43 [info     /  44kB] > GET / (200 OK) [293ms]
-2024-03-21 06:53:47 [debug    /  35kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-03-21 06:53:47 [info     /  33kB] > GET / (200 OK) [94ms]
-2024-03-21 06:53:54 [debug    /  52kB] > parsed template: FOTA/ap_templates/styles.html (took 52 ms)
-2024-03-21 06:53:54 [debug    /  76kB] > parsed template: FOTA/ap_templates/index.html (took 157 ms)
-2024-03-21 06:53:54 [info     /  74kB] > GET / (200 OK) [479ms]
-2024-03-21 06:53:54 [debug    /  65kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
-2024-03-21 06:53:54 [info     /  63kB] > GET / (200 OK) [89ms]
-2024-11-26 10:03:26 [info     /  85kB] > starting catch all dns server on port 53
-2024-11-26 10:03:26 [info     /  83kB] > starting web server on port 80
-2024-11-26 10:03:37 [debug    /  93kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-11-26 10:03:37 [info     /  91kB] > GET /hotspot-detect.html (200 OK) [199ms]
-2024-11-26 10:03:38 [debug    /  82kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
-2024-11-26 10:03:38 [info     /  80kB] > GET /hotspot-detect.html (200 OK) [112ms]
-2024-11-26 10:03:38 [debug    /  71kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
-2024-11-26 10:03:38 [info     /  69kB] > GET /hotspot-detect.html (200 OK) [200ms]
-2024-11-26 10:03:39 [debug    /  53kB] > parsed template: FOTA/ap_templates/styles.html (took 62 ms)
-2024-11-26 10:03:39 [debug    /  45kB] > parsed template: FOTA/ap_templates/index.html (took 159 ms)
-2024-11-26 10:03:39 [info     /  43kB] > GET / (200 OK) [266ms]
-2024-11-26 10:03:40 [debug    /  36kB] > parsed template: FOTA/ap_templates/redirect.html (took 10 ms)
-2024-11-26 10:03:40 [info     /  34kB] > GET /hotspot-detect.html (200 OK) [321ms]
-2024-11-26 10:04:31 [debug    /  98kB]   - connecting
-2024-11-26 10:04:34 [debug    /  96kB]   - connecting
-2024-11-26 10:04:41 [debug    /  99kB]   - connecting
-2024-11-26 10:04:44 [debug    /  97kB]   - connecting
-2024-11-26 10:04:50 [info     /  93kB] > starting catch all dns server on port 53
-2024-11-26 10:04:50 [info     /  91kB] > starting web server on port 80
-2024-11-26 10:04:59 [debug    /  77kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-11-26 10:04:59 [info     /  75kB] > GET /hotspot-detect.html (200 OK) [95ms]
-2024-11-26 10:04:48 [debug    / 103kB]   - got ip address
-2024-11-26 10:04:58 [info     /  99kB] > starting catch all dns server on port 53
-2024-11-26 10:04:58 [info     /  97kB] > starting web server on port 80
-2024-11-26 10:04:53 [debug    /  87kB]   - got ip address
-2024-11-26 10:05:03 [info     /  84kB] > starting catch all dns server on port 53
-2024-11-26 10:05:03 [info     /  82kB] > starting web server on port 80
-2024-11-26 10:05:02 [debug    /  81kB]   - got ip address
-2024-11-26 10:05:13 [info     / 101kB] > starting catch all dns server on port 53
-2024-11-26 10:05:13 [info     /  99kB] > starting web server on port 80
-2024-11-26 10:06:43 [info     /  98kB] > starting catch all dns server on port 53
-2024-11-26 10:06:43 [info     /  95kB] > starting web server on port 80
-2024-11-26 10:06:56 [debug    /  84kB] > parsed template: FOTA/ap_templates/redirect.html (took 10 ms)
-2024-11-26 10:06:56 [info     /  82kB] > GET /hotspot-detect.html (200 OK) [96ms]
-2024-11-26 10:06:57 [debug    /  72kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
-2024-11-26 10:06:57 [info     /  95kB] > GET /hotspot-detect.html (200 OK) [560ms]
-2024-11-26 10:06:57 [debug    /  86kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
-2024-11-26 10:06:57 [info     /  84kB] > GET /hotspot-detect.html (200 OK) [274ms]
-2024-11-26 10:06:58 [debug    /  53kB] > parsed template: FOTA/ap_templates/styles.html (took 60 ms)
-2024-11-26 10:06:58 [debug    /  44kB] > parsed template: FOTA/ap_templates/index.html (took 177 ms)
-2024-11-26 10:06:58 [info     /  41kB] > GET / (200 OK) [282ms]
-2024-11-26 10:06:59 [debug    /  36kB] > parsed template: FOTA/ap_templates/redirect.html (took 13 ms)
-2024-11-26 10:06:59 [info     /  34kB] > GET /hotspot-detect.html (200 OK) [350ms]
-2024-11-26 10:07:30 [debug    /  96kB]   - connecting
-2024-11-26 10:07:33 [debug    /  95kB]   - connecting
-2024-11-26 10:07:38 [debug    /  98kB]   - got ip address
+imer_function
+2024-11-26 11:24:47 [info     /  82kB] > Displayed function: timer_function
+2024-11-26 11:24:54 [info     /  95kB] > Displayed function: timer_function
+2024-11-26 11:25:00 [info     / 100kB] > Displayed function: timer_function
+2024-11-26 11:25:01 [info     /  90kB] > Displayed function: timer_function
+2024-11-26 11:25:02 [info     / 101kB] > Displayed function: odometer
+2024-11-26 11:25:04 [info     /  79kB] > Displayed function: lap_timer
+2024-11-26 11:25:06 [info     / 100kB] > Displayed function: hour
+2024-11-26 11:25:10 [info     /  89kB] > Displayed function: voltage
+2024-11-26 11:25:13 [info     /  86kB] > Displayed function: date
+2024-11-26 11:25:17 [info     / 100kB] > Displayed function: hour
+2024-11-26 11:25:20 [info     /  90kB] > Displayed function: voltage
+2024-11-26 11:25:21 [info     /  70kB] > Displayed function: g_sensor
+2024-11-26 11:25:25 [info     / 100kB] > Displayed function: voltage
+2024-11-26 11:25:30 [debug    /  72kB] System powered on
+2024-11-26 11:25:30 [info     /  69kB] > Brightness set to 10
+2024-11-26 11:25:30 [info     /  66kB] > Displayed function: hour
+2024-11-26 11:25:35 [info     /  96kB] > Displayed function: timer_function
+2024-11-26 11:25:36 [info     /  87kB] > Displayed function: timer_function
+2024-11-26 11:25:37 [info     /  78kB] > Displayed function: timer_function
+2024-11-26 11:25:40 [info     /  94kB] > Pressed digit: -10
+2024-11-26 11:25:40 [info     /  92kB] > Pressed digit: -1000
+2024-11-26 11:25:40 [info     /  88kB] > Pressed digit: 1
+2024-11-26 11:25:42 [info     / 103kB] > Displayed function: set_clock_format
+2024-11-26 11:25:47 [info     /  87kB] > Displayed function: set_setting
+2024-11-26 11:25:48 [info     /  73kB] > Pressed digit: 1
+2024-11-26 11:25:49 [info     /  96kB] > Pressed digit: 1
+2024-11-26 11:25:50 [info     /  93kB] > Displayed function: sw_update
+2024-11-26 11:25:51 [debug    /  85kB]   - connecting
+2024-11-26 11:25:55 [debug    /  83kB]   - connecting
+2024-11-26 11:26:21 [debug    /  82kB]   - connecting
+2024-11-26 11:26:24 [debug    /  80kB]   - connecting
+2024-11-26 11:26:26 [debug    /  78kB] > Connected to wifi, IP address 192.168.1.135
+2024-11-26 11:26:31 [debug    /  76kB] > Entering update mode.
+2024-11-26 11:26:31 [debug    / 102kB] > Version url is: https://raw.githubusercontent.com/80sEngineering/MeshCataloger/main/version.json
+2024-11-26 11:26:31 [debug    /  98kB] > Current device firmware version is 2
+2024-11-26 11:26:31 [debug    /  96kB] > Checking for latest version... on https://raw.githubusercontent.com/80sEngineering/MeshCataloger/main/version.json
+2024-11-26 11:26:32 [debug    /  93kB] > Data is: {'version': 2}, url is: https://raw.githubusercontent.com/80sEngineering/MeshCataloger/main/version.json
+2024-11-26 11:26:32 [debug    /  91kB] > Latest version is: 2
+2024-11-26 11:26:32 [debug    /  89kB] > Newer version available: False
+2024-11-26 11:26:32 [debug    /  87kB] > No new updates available.
+2024-11-26 11:26:37 [info     /  82kB] > Brightness set to 5
+2024-11-26 11:26:37 [info     / 100kB] > Brightness set to 10
+2024-11-26 11:26:37 [info     /  95kB] > Brightness set to 10
+2024-11-26 11:26:37 [info     /  77kB] > Brightness set to 5
+2024-11-26 11:26:37 [info     /  72kB] > Brightness set to 5
+2024-11-26 11:26:37 [debug    /  71kB] > Resetting...
+2021-01-01 00:00:03 [info     / 100kB] > Brightness set to 10
+2024-11-26 11:25:51 [info     /  90kB] > System initialized
+2024-11-26 19:07:32 [info     / 102kB] > Brightness set to 10
+2024-11-26 11:25:54 [info     /  92kB] > System initialized
+2024-11-26 11:25:56 [info     /  87kB] > Displayed function: set_hour
+2024-11-26 11:26:01 [info     /  93kB] > Pressed digit: 100
+2024-11-26 11:26:01 [error    /  91kB] > Data clock_format not found
+2024-11-26 12:26:02 [info     /  85kB] > Pressed digit: 100
+2024-11-26 13:26:01 [info     /  96kB] > Pressed digit: 100
+2024-11-26 14:26:04 [info     /  77kB] > Pressed digit: 100
+2024-11-26 15:26:01 [info     /  87kB] > Pressed digit: 100
+2024-11-26 16:26:01 [info     / 101kB] > Pressed digit: 100
+2024-11-26 17:26:01 [info     /  71kB] > Pressed digit: 100
+2024-11-26 18:26:01 [info     /  72kB] > Pressed digit: 100
+2024-11-26 18:26:01 [error    /  70kB] > Data clock_format not found
+2024-11-26 19:26:37 [info     /  96kB] > Pressed digit: 10
+2024-11-26 19:36:02 [info     /  95kB] > Pressed digit: -10
+2024-11-26 19:26:02 [info     /  84kB] > Pressed digit: 10
+2024-11-26 19:36:03 [info     /  73kB] > Pressed digit: -10
+2024-11-26 19:26:03 [info     /  87kB] > Pressed digit: -10
+2024-11-26 19:16:04 [info     /  92kB] > Pressed digit: -10
+2024-11-26 19:06:01 [info     /  87kB] > Pressed digit: 1
+2024-11-26 19:07:01 [info     /  70kB] > Pressed digit: 1
+2024-11-26 19:07:01 [error    /  68kB] > Data clock_format not found
+2024-11-26 19:08:11 [info     /  70kB] > Displayed function: hour
+2024-11-26 19:08:17 [info     /  76kB] > Displayed function: date
+2024-11-26 19:08:20 [info     /  84kB] > Displayed function: hour
+2024-11-26 19:09:22 [error    /  69kB] > Data clock_format not found
+2024-11-26 19:09:22 [error    /  80kB] > Data clock_format not found
+2024-11-26 19:10:33 [info     /  95kB] > Brightness set to 10
+2024-11-26 19:09:23 [info     /  96kB] > System initialized
+2024-11-26 19:09:25 [info     /  83kB] > Displayed function: speed
+2024-11-26 19:09:26 [info     /  74kB] > Displayed function: odometer
+2024-11-26 19:09:28 [info     /  98kB] > Displayed function: hour
+2024-11-26 19:09:29 [info     / 102kB] > Displayed function: set_hour
+2024-11-26 19:09:31 [info     /  69kB] > Pressed digit: 1
+2024-11-26 19:10:01 [info     /  86kB] > Pressed digit: 1
+2024-11-26 19:11:01 [info     /  77kB] > Pressed digit: 1
+2024-11-26 19:12:01 [info     /  99kB] > Pressed digit: 1
+2024-11-26 19:13:01 [info     /  85kB] > Pressed digit: 1
+2024-11-26 19:14:01 [info     / 103kB] > Pressed digit: 1
+2024-11-26 19:15:01 [info     /  91kB] > Pressed digit: 1
+2024-11-26 19:16:01 [info     /  76kB] > Pressed digit: 1
+2024-11-26 19:17:01 [info     /  99kB] > Pressed digit: 1
+2024-11-26 19:18:01 [info     /  90kB] > Pressed digit: 1
+2024-11-26 19:19:01 [info     /  92kB] > Pressed digit: 10
+2024-11-26 19:29:01 [info     /  90kB] > Pressed digit: 10
+2024-11-26 19:39:01 [info     /  95kB] > Pressed digit: 10
+2024-11-26 19:49:01 [info     /  98kB] > Pressed digit: 10
+2024-11-26 19:59:02 [info     / 102kB] > Pressed digit: 1000
+2024-11-26 05:59:01 [info     / 102kB] > Pressed digit: 1000
+2024-11-26 15:59:01 [info     / 102kB] > Pressed digit: 100
+2024-11-26 16:59:01 [info     /  79kB] > Pressed digit: 100
+2024-11-26 17:59:01 [info     / 102kB] > Pressed digit: 100
+2024-11-26 18:59:01 [info     /  88kB] > Pressed digit: 100
+2024-11-26 19:59:01 [info     /  75kB] > Pressed digit: 100
+2024-11-26 20:59:01 [info     /  88kB] > Pressed digit: 100
+2024-11-26 21:59:01 [info     /  73kB] > Pressed digit: 100
+2024-11-26 22:59:01 [info     /  95kB] > Pressed digit: 100
+2024-11-26 23:59:01 [info     /  83kB] > Pressed digit: 100
+2024-11-26 00:59:01 [info     /  90kB] > Pressed digit: 100
+2024-11-26 01:59:01 [info     /  76kB] > Pressed digit: 100
+2024-11-26 02:59:01 [info     /  90kB] > Pressed digit: 100
+2024-11-26 03:59:01 [info     / 102kB] > Pressed digit: 100
+2024-11-26 04:59:01 [info     /  73kB] > Pressed digit: 100
+2024-11-26 05:59:01 [info     /  90kB] > Pressed digit: 100
+2024-11-26 06:59:01 [info     /  72kB] > Pressed digit: 100
+2024-11-26 07:59:01 [info     /  89kB] > Pressed digit: 100
+2024-11-26 08:59:01 [info     / 102kB] > Pressed digit: 100
+2024-11-26 09:59:01 [info     /  83kB] > Pressed digit: 100
+2024-11-26 10:59:01 [info     /  99kB] > Pressed digit: 100
+2024-11-26 11:59:01 [info     /  80kB] > Pressed digit: 100
+2024-11-26 12:59:01 [info     / 102kB] > Pressed digit: 100
+2024-11-26 13:59:01 [info     /  81kB] > Pressed digit: 100
+2024-11-26 14:59:01 [info     /  94kB] > Pressed digit: 100
+2024-11-26 15:59:01 [info     /  77kB] > Pressed digit: 100
+2024-11-26 16:59:01 [info     /  90kB] > Pressed digit: 100
+2024-11-26 17:59:01 [info     /  72kB] > Pressed digit: 100
+2024-11-26 18:59:01 [info     /  92kB] > Pressed digit: 100
+2024-11-26 19:59:01 [info     /  78kB] > Pressed digit: 10
+2024-11-26 19:09:01 [info     /  69kB] > Pressed digit: 10
+2024-11-26 19:19:01 [info     / 102kB] > Pressed digit: 1
+2024-11-26 19:20:01 [info     /  88kB] > Pressed digit: 1
+2024-11-26 19:21:01 [info     / 102kB] > Pressed digit: 1
+2024-11-26 19:22:01 [info     /  77kB] > Pressed digit: 1
+2024-11-26 19:23:01 [info     /  89kB] > Pressed digit: 1
+2024-11-26 19:24:01 [info     /  99kB] > Pressed digit: 1
+2024-11-26 19:25:01 [info     /  73kB] > Pressed digit: 1
+2024-11-26 19:26:05 [info     /  90kB] > Pressed digit: -10
+2024-11-26 19:15:02 [info     / 100kB] > Pressed digit: -1
+2024-11-26 19:14:02 [info     /  82kB] > Pressed digit: -1
+2024-11-26 19:12:02 [info     /  93kB] > Pressed digit: -1
+2024-11-26 19:11:02 [info     /  90kB] > Displayed function: hour
+2024-11-26 19:11:03 [info     /  84kB] > Displayed function: timer_function
+2024-11-26 19:11:07 [info     /  84kB] > Displayed function: timer_function
+2024-11-26 19:11:10 [info     /  87kB] > Displayed function: timer_function
+2024-11-26 19:11:11 [info     /  99kB] > Displayed function: timer_function
+2024-11-26 19:11:13 [info     /  78kB] > Displayed function: g_sensor
+2024-11-26 19:11:19 [info     /  69kB] > Displayed function: speed
+2024-11-26 19:11:21 [info     /  96kB] > Displayed function: hour
+2024-11-26 19:11:24 [info     /  73kB] > Displayed function: voltage
+2024-11-26 19:11:26 [info     /  81kB] > Displayed function: lap_timer
+2024-11-26 19:11:27 [info     /  74kB] > Displayed function: hour
+2024-11-26 19:11:49 [info     /  89kB] > Brightness set to 5
+2024-11-26 19:11:49 [info     /  84kB] > Brightness set to 5
