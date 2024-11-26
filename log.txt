@@ -1,0 +1,106 @@
+con.ico (404 Not Found) [558ms]
+2024-03-21 06:53:37 [debug    /  51kB] > parsed template: FOTA/ap_templates/styles.html (took 57 ms)
+2024-03-21 06:53:37 [debug    /  44kB] > parsed template: FOTA/ap_templates/index.html (took 249 ms)
+2024-03-21 06:53:37 [info     /  42kB] > GET / (200 OK) [852ms]
+2024-03-21 06:53:42 [debug    /  50kB] > parsed template: FOTA/ap_templates/styles.html (took 1772 ms)
+2024-03-21 06:53:42 [debug    /  42kB] > parsed template: FOTA/ap_templates/index.html (took 1867 ms)
+2024-03-21 06:53:42 [info     /  40kB] > GET / (200 OK) [2048ms]
+2024-03-21 06:53:42 [info     /  72kB] > GET /favicon.ico (404 Not Found) [2152ms]
+2024-03-21 06:53:43 [debug    /  56kB] > parsed template: FOTA/ap_templates/redirect.html (took 42 ms)
+2024-03-21 06:53:43 [info     /  54kB] > GET / (200 OK) [357ms]
+2024-03-21 06:53:43 [debug    /  52kB] > parsed template: FOTA/ap_templates/redirect.html (took 131 ms)
+2024-03-21 06:53:43 [info     /  50kB] > GET / (200 OK) [461ms]
+2024-03-21 06:53:57 [debug    /  60kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:53:57 [info     /  58kB] > GET / (200 OK) [92ms]
+2024-03-21 06:53:58 [debug    /  48kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:53:58 [info     /  46kB] > GET / (200 OK) [290ms]
+2024-03-21 06:54:08 [debug    /  37kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:54:08 [info     /  35kB] > GET / (200 OK) [100ms]
+2024-03-21 06:54:13 [debug    /  60kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
+2024-03-21 06:54:13 [info     /  58kB] > GET / (200 OK) [185ms]
+2024-03-21 06:54:38 [debug    /  35kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:54:38 [info     /  33kB] > GET / (200 OK) [95ms]
+2024-03-21 06:54:46 [debug    /  49kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
+2024-03-21 06:54:46 [info     /  46kB] > GET / (200 OK) [101ms]
+2024-03-21 06:55:08 [debug    /  33kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:55:08 [info     /  30kB] > GET / (200 OK) [99ms]
+2024-03-21 06:55:18 [debug    /  61kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:55:18 [info     /  59kB] > GET / (200 OK) [122ms]
+2024-03-21 06:52:48 [debug    /  91kB]   - got ip address
+2024-03-21 06:52:58 [info     /  88kB] > starting catch all dns server on port 53
+2024-03-21 06:52:58 [info     /  85kB] > starting web server on port 80
+2024-03-21 06:52:58 [debug    /  95kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
+2024-03-21 06:52:58 [info     /  93kB] > GET / (200 OK) [121ms]
+2024-03-21 06:53:04 [debug    /  66kB] > parsed template: FOTA/ap_templates/redirect.html (took 10 ms)
+2024-03-21 06:53:04 [info     /  64kB] > GET / (200 OK) [179ms]
+2024-03-21 06:52:57 [debug    /  81kB]   - connecting
+2024-03-21 06:53:00 [debug    /  79kB]   - connecting
+2024-03-21 06:53:02 [info     /  99kB] > starting catch all dns server on port 53
+2024-03-21 06:53:02 [info     /  97kB] > starting web server on port 80
+2024-03-21 06:53:04 [debug    /  85kB]   - got ip address
+2024-03-21 06:53:14 [info     /  81kB] > starting catch all dns server on port 53
+2024-03-21 06:53:14 [info     / 102kB] > starting web server on port 80
+2024-03-21 06:53:30 [debug    /  88kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:53:31 [info     /  85kB] > GET / (200 OK) [183ms]
+2024-03-21 06:53:31 [debug    /  73kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:53:32 [info     /  71kB] > GET / (200 OK) [112ms]
+2024-03-21 06:53:32 [info     /  63kB] > GET /configure (404 Not Found) [25ms]
+2024-03-21 06:53:38 [info     /  92kB] > GET /configure (404 Not Found) [80ms]
+2024-03-21 06:53:43 [debug    /  83kB] > parsed template: FOTA/ap_templates/redirect.html (took 12 ms)
+2024-03-21 06:53:43 [info     /  81kB] > GET / (200 OK) [113ms]
+2024-03-21 06:53:43 [debug    /  53kB] > parsed template: FOTA/ap_templates/styles.html (took 57 ms)
+2024-03-21 06:53:43 [debug    /  47kB] > parsed template: FOTA/ap_templates/index.html (took 203 ms)
+2024-03-21 06:53:43 [info     /  44kB] > GET / (200 OK) [293ms]
+2024-03-21 06:53:47 [debug    /  35kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-03-21 06:53:47 [info     /  33kB] > GET / (200 OK) [94ms]
+2024-03-21 06:53:54 [debug    /  52kB] > parsed template: FOTA/ap_templates/styles.html (took 52 ms)
+2024-03-21 06:53:54 [debug    /  76kB] > parsed template: FOTA/ap_templates/index.html (took 157 ms)
+2024-03-21 06:53:54 [info     /  74kB] > GET / (200 OK) [479ms]
+2024-03-21 06:53:54 [debug    /  65kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
+2024-03-21 06:53:54 [info     /  63kB] > GET / (200 OK) [89ms]
+2024-11-26 10:03:26 [info     /  85kB] > starting catch all dns server on port 53
+2024-11-26 10:03:26 [info     /  83kB] > starting web server on port 80
+2024-11-26 10:03:37 [debug    /  93kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-11-26 10:03:37 [info     /  91kB] > GET /hotspot-detect.html (200 OK) [199ms]
+2024-11-26 10:03:38 [debug    /  82kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
+2024-11-26 10:03:38 [info     /  80kB] > GET /hotspot-detect.html (200 OK) [112ms]
+2024-11-26 10:03:38 [debug    /  71kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
+2024-11-26 10:03:38 [info     /  69kB] > GET /hotspot-detect.html (200 OK) [200ms]
+2024-11-26 10:03:39 [debug    /  53kB] > parsed template: FOTA/ap_templates/styles.html (took 62 ms)
+2024-11-26 10:03:39 [debug    /  45kB] > parsed template: FOTA/ap_templates/index.html (took 159 ms)
+2024-11-26 10:03:39 [info     /  43kB] > GET / (200 OK) [266ms]
+2024-11-26 10:03:40 [debug    /  36kB] > parsed template: FOTA/ap_templates/redirect.html (took 10 ms)
+2024-11-26 10:03:40 [info     /  34kB] > GET /hotspot-detect.html (200 OK) [321ms]
+2024-11-26 10:04:31 [debug    /  98kB]   - connecting
+2024-11-26 10:04:34 [debug    /  96kB]   - connecting
+2024-11-26 10:04:41 [debug    /  99kB]   - connecting
+2024-11-26 10:04:44 [debug    /  97kB]   - connecting
+2024-11-26 10:04:50 [info     /  93kB] > starting catch all dns server on port 53
+2024-11-26 10:04:50 [info     /  91kB] > starting web server on port 80
+2024-11-26 10:04:59 [debug    /  77kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-11-26 10:04:59 [info     /  75kB] > GET /hotspot-detect.html (200 OK) [95ms]
+2024-11-26 10:04:48 [debug    / 103kB]   - got ip address
+2024-11-26 10:04:58 [info     /  99kB] > starting catch all dns server on port 53
+2024-11-26 10:04:58 [info     /  97kB] > starting web server on port 80
+2024-11-26 10:04:53 [debug    /  87kB]   - got ip address
+2024-11-26 10:05:03 [info     /  84kB] > starting catch all dns server on port 53
+2024-11-26 10:05:03 [info     /  82kB] > starting web server on port 80
+2024-11-26 10:05:02 [debug    /  81kB]   - got ip address
+2024-11-26 10:05:13 [info     / 101kB] > starting catch all dns server on port 53
+2024-11-26 10:05:13 [info     /  99kB] > starting web server on port 80
+2024-11-26 10:06:43 [info     /  98kB] > starting catch all dns server on port 53
+2024-11-26 10:06:43 [info     /  95kB] > starting web server on port 80
+2024-11-26 10:06:56 [debug    /  84kB] > parsed template: FOTA/ap_templates/redirect.html (took 10 ms)
+2024-11-26 10:06:56 [info     /  82kB] > GET /hotspot-detect.html (200 OK) [96ms]
+2024-11-26 10:06:57 [debug    /  72kB] > parsed template: FOTA/ap_templates/redirect.html (took 11 ms)
+2024-11-26 10:06:57 [info     /  95kB] > GET /hotspot-detect.html (200 OK) [560ms]
+2024-11-26 10:06:57 [debug    /  86kB] > parsed template: FOTA/ap_templates/redirect.html (took 9 ms)
+2024-11-26 10:06:57 [info     /  84kB] > GET /hotspot-detect.html (200 OK) [274ms]
+2024-11-26 10:06:58 [debug    /  53kB] > parsed template: FOTA/ap_templates/styles.html (took 60 ms)
+2024-11-26 10:06:58 [debug    /  44kB] > parsed template: FOTA/ap_templates/index.html (took 177 ms)
+2024-11-26 10:06:58 [info     /  41kB] > GET / (200 OK) [282ms]
+2024-11-26 10:06:59 [debug    /  36kB] > parsed template: FOTA/ap_templates/redirect.html (took 13 ms)
+2024-11-26 10:06:59 [info     /  34kB] > GET /hotspot-detect.html (200 OK) [350ms]
+2024-11-26 10:07:30 [debug    /  96kB]   - connecting
+2024-11-26 10:07:33 [debug    /  95kB]   - connecting
+2024-11-26 10:07:38 [debug    /  98kB]   - got ip address

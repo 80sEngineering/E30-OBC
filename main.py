@@ -12,6 +12,9 @@ from timer import Timer, LapTimer
 import ujson as json
 from memory import access_data
 from micropython import const
+import fota_master
+from FOTA import connect_to_wifi, is_connected_to_wifi, server
+import os
 
 
 class OBC:
@@ -76,7 +79,7 @@ class OBC:
         self.can_switch_function = True
         self.priority_counter = 0
         self.priority_interval = [1,20,40]
-        self.watchdog = WDT(timeout=5000)
+        #self.watchdog = WDT(timeout=5000)
         self.loop()
     
     def init_i2c(self):
@@ -267,13 +270,17 @@ class OBC:
                 self.can_switch_function = True
             
             elif self.displayed_function.__name__ == 'set_setting':
-                setting_functions = [self.set_language,self.set_clock_format,self.set_unit,self.set_display_brightness,self.set_sensors_nb,self.set_auto_off,self.set_backlight_brightness,self.set_gsensor_error]
+                setting_functions = [self.set_language,self.set_clock_format,self.set_unit,self.sw_update,self.set_display_brightness,self.set_sensors_nb,self.set_auto_off,self.set_backlight_brightness,self.set_gsensor_error]
                 try:
                     self.displayed_function = setting_functions[self.setting_index]
                 except IndexError:
                     pass
                
-            
+            elif self.displayed_function.__name__ == 'sw_update':
+                self.can_switch_function = True
+                fota_master.machine_reset()
+                self.displayed_function = self.set_setting
+                
             elif self.displayed_function.__name__ in ['set_language','set_clock_format','set_unit','set_display_brightness','set_sensors_nb','set_auto_off','set_backlight_brightness','set_gsensor_error']:
                 self.displayed_function = self.set_setting
             
@@ -885,7 +892,40 @@ class OBC:
                 self.unit.update()
                 self.digit_pressed = 0
             self.show(access_data('unit'))
-                                
+    
+    def sw_update(self):
+        if self.show_function_name(self.button9):
+            self.show('UPDATE')
+        else:
+            self.show(' WIFI ')
+            self.can_switch_function = False
+            
+            os.stat("wifi.json")
+            with open("wifi.json") as f:
+                wifi_current_attempt = 1
+                wifi_credentials = json.load(f)
+                
+                while (wifi_current_attempt < 3):
+                    try:
+                        ip_address = connect_to_wifi(wifi_credentials["ssid"], wifi_credentials["password"])
+                    except:
+                        pass
+                    if is_connected_to_wifi():
+                        print(f"Connected to wifi, IP address {ip_address}")
+                        self.show(wifi_credentials["ssid"][:6])
+                        break
+                    else:
+                        wifi_current_attempt += 1
+                        
+                if is_connected_to_wifi():
+                    fota_master.application_mode()
+                else:
+                    print('Something went wrong, going into setup mode.')
+                    fota_master.setup_mode()
+                
+                server.run()
+
+            
     def set_display_brightness(self):
         if self.show_function_name(self.button9):
             self.show('BRIGHT')
@@ -1002,7 +1042,7 @@ class OBC:
         
     def loop(self):
         while True:
-            self.watchdog.feed()
+            #self.watchdog.feed()
             if self.powered:
                 self.displayed_function()
                 if self.priority_counter == self.priority_interval[1] or  self.priority_counter == self.priority_interval[2]:
