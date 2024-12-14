@@ -50,6 +50,7 @@ class MPU6050(object):
 
         if device_addr is None:
             devices = set(self._mpu_i2c.scan())
+            print(devices)
             mpus = devices.intersection(set(self._mpu_addr))
             number_of_mpus = len(mpus)
             if number_of_mpus == 0:

@@ -1,4 +1,5 @@
-import machine, os, gc
+import os, gc
+from machine import RTC
 
 log_file = "log.txt"
 
@@ -8,7 +9,7 @@ LOG_ERROR = 0b000100
 LOG_DEBUG = 0b001000
 LOG_EXCEPTION = 0b010000
 LOG_CAR = 0b100000
-LOG_ALL = LOG_INFO | LOG_WARNING | LOG_ERROR | LOG_DEBUG | LOG_EXCEPTION | LOG_CAR
+LOG_ALL = LOG_WARNING | LOG_ERROR | LOG_DEBUG | LOG_EXCEPTION | LOG_CAR
 
 _logging_types = LOG_ALL
 
@@ -19,7 +20,7 @@ _log_truncate_at = 11 * 1024
 _log_truncate_to =  8 * 1024
 
 def datetime_string():
-  dt = machine.RTC().datetime()
+  dt = RTC().datetime()
   return "{0:04d}-{1:02d}-{2:02d} {4:02d}:{5:02d}:{6:02d}".format(*dt)
 
 def file_size(file):

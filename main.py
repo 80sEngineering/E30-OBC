@@ -1,62 +1,80 @@
+# -----------------------------------------------------------------------------
+# 80s Engineering On-board Computer Firmware v0.1
+# Copyright (C) 2024 80s Engineering. All rights reserved.
+#
+# This firmware is proprietary. Users are permitted to modify it; however,
+# redistribution, selling, or unauthorized commercial use is not authorized.
+#
+# For inquiries, support, or permission requests, please contact us at:
+# contact@80s.engineering
+#
+# THE FIRMWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE FIRMWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+# -----------------------------------------------------------------------------
+
 import time
 from math import log
-import ht16k33_driver
-from GPS_parser import GPS_handler
-from button import Button
-from imu import MPU6050
-from dictionnary import Dictionnary
-from unit import Unit
-from machine import I2C, Pin, RTC, ADC, lightsleep, WDT, PWM
-from timer import Timer, LapTimer
-import ujson as json
-from memory import access_data
-import fota_master
+import ht16k33_driver                # Display's driver
+from GPS_parser import GPS_handler   #
+from button import Button            #
+from imu import MPU6050              # Accelerometer
+from mcp3208 import MCP3208          # Analog to digital converter
+from dictionnary import Dictionnary  # Used for translations
+from unit import Unit                # Handles metric to imperial conversions
+from machine import I2C, Pin, RTC, WDT, SPI 
+from timer import Timer, LapTimer    #
+import ujson as json                 #
+from memory import access_data       #
+import fota_master                   # Handles Over The Air Firmware updates
 from FOTA import connect_to_wifi, is_connected_to_wifi, server
-from FOTA.ota import OTAUpdater
-import os
-import logging
-
-
+from FOTA.ota import OTAUpdater      #
+import os                            #
+import logging                       #
+from ds3231 import DS3231            # Real time clock
+                
 class OBC:
     def __init__(self):
-        self.pwr_pin = Pin(4, Pin.OUT)
-        self.pwr_pin.high()
+        self.pwr_pin = Pin(0, Pin.OUT) # Used to latch power when ignition is off
+        self.pwr_pin.low()
         self.powered = True
         
-        self.button1 = Button(6, 1, self.function_manager)
-        self.button2 = Button(7, 2, self.function_manager)
-        self.button3 = Button(8, 3, self.function_manager)
-        self.button4 = Button(9, 4, self.function_manager)
-        self.button5 = Button(10, 5, self.function_manager)
-        self.button6 = Button(11, 6, self.function_manager)
-        self.button7 = Button(12, 7, self.function_manager)
-        self.button8 = Button(13, 8, self.function_manager)
-        self.button9 = Button(14, 9, self.set_reset)
-        self.button10 = Button(18, 10, self.digit_manager)
-        self.button11 = Button(19, 11, self.digit_manager)
-        self.button12 = Button(20, 12, self.digit_manager)
-        self.button13 = Button(21, 13, self.digit_manager)
+        #self.button = Button(pin_number, button_id, function)
+        self.button1 = Button(4, 1, self.function_manager)
+        self.button2 = Button(5, 2, self.function_manager)
+        self.button3 = Button(6, 3, self.function_manager)
+        self.button4 = Button(7, 4, self.function_manager)
+        self.button5 = Button(8, 5, self.function_manager)
+        self.button6 = Button(9, 6, self.function_manager)
+        self.button7 = Button(10, 7, self.function_manager)
+        self.button8 = Button(11, 8, self.function_manager)
+        self.button9 = Button(20, 9, self.set_reset) #TODO:TROUBLESHOOTING PIN INVERSION
+        self.button10 = Button(13, 10, self.digit_manager)
+        self.button11 = Button(14, 11, self.digit_manager)
+        self.button12 = Button(15, 12, self.digit_manager)
+        self.button13 = Button(12, 13, self.digit_manager) #TODO:TROUBLESHOOTING PIN INVERSION
         
 
         self.digit_pressed = 0
-        backlight = Pin(15, Pin.OUT)
-        self.backlight_pwm = PWM(backlight)
-        self.backlight_pwm.freq(1000)
         self.backlight_brightness = access_data('backlight_brightness')
-        self.led = Pin(25, Pin.OUT)
+        self.led = Pin(25, Pin.OUT) #RPi's internal LED
         self.led.high()
-        self.light_optocoupler = Pin(22, Pin.IN)
-        self.light_optocoupler.irq(handler=self.set_backlight, trigger = Pin.IRQ_RISING|Pin.IRQ_FALLING)
-        self.temp_power = Pin(5, Pin.OUT)
-        self.temp_adc = ADC(2)
-        self.pressure_adc = ADC(1)
-        self.battery_adc = ADC(Pin(26, Pin.IN))
-        increased_adc_resolution = Pin(23,Pin.OUT)
-        increased_adc_resolution.high()
-        self.refresh_rate_adjuster = {'timestamp':None,'values':[]}
-        self.init_i2c()
-        self.rtc = RTC()
-        self.rtc.datetime(access_data('current_time'))
+        
+        # Refresh_rate_adjuster is used to lower the refresh rate of certain displayed values,
+        # by averaging temporary data
+        self.refresh_rate_adjuster = {'timestamp':None,'values':[]} 
+    
+        self.init_communication() # Initiates I2C and SPI communication to RTC, display, MPU and ADC
+        self.display.brightness(access_data('display_brightness'))
+        
+        # The OBC has a dedicated always running DS3231 RTC,
+        # which is used to set the RPi's internal RTC
+        self.rpi_rtc = RTC()   
+        self.rpi_rtc.datetime(self.rtc.datetime())
 
         self.timer = Timer()
         self.laptimer = LapTimer()
@@ -72,30 +90,37 @@ class OBC:
         self.words = Dictionnary(language).words
         unit = access_data("unit")
         self.unit = Unit(unit)
-        self.setting_index = 0
-        self.displayed_function = self.hour
+        self.setting_index = 0 # Used in the setting menu, accessed by simultaneously pressing 1000 and 10.
+        
+        self.displayed_function = self.hour # self.displayed_function is what the infinite loop is contineously running
+        
         self.last_displayed_function = None
-        self.last_use = time.ticks_ms()
+        self.last_use = time.ticks_ms() # Used for auto-off
         self.can_switch_function = True
-        self.priority_counter = 0
+        # Used to periodically schedule tasks in order to optimize ressources
+        self.priority_counter = 0 
         self.priority_interval = [1,20,40]
-        #self.watchdog = WDT(timeout=5000)
-        logging.info('> System initialized')
+        #self.watchdog = WDT(timeout=5000) 
+        logging.info('> System initialized!')
         self.loop()
     
-    def init_i2c(self):
+    def init_communication(self):
         i2c = I2C(id=1, sda=Pin(2), scl=Pin(3), freq = 9600)
+        self.rtc = DS3231(i2c)
         self.display = ht16k33_driver.Seg14x4(i2c)
-        self.display.brightness(access_data('display_brightness'))
-        self.mpu = MPU6050(i2c)
+        self.mpu = MPU6050(i2c, device_addr = 1)
+        spi = SPI(0, sck=Pin(18),mosi=Pin(19),miso=Pin(16), baudrate=50000)
+        spi_cs = Pin(17, Pin.OUT)
+        self.adc = MCP3208(spi, spi_cs)
+        
         
         
     def function_manager(self, button_id, long_press):
         self.last_use = time.ticks_ms()
         self.digit_pressed = 0
-        if not self.powered:
-            self.power_handler()
-        if self.can_switch_function:
+        if not self.powered: # Wakes up the OBC if function is switched
+            self.power_handler() 
+        if self.can_switch_function: 
             if button_id == 1:
                 if self.displayed_function.__name__ == 'hour':
                     self.displayed_function = self.date
@@ -133,6 +158,7 @@ class OBC:
                 
 
             elif button_id == 7:
+                # Depends of how much sensors are equipped
                 if access_data('sensors_nb') == 3 and not self.displayed_function.__name__ in ['pressure','temperature']:
                     self.displayed_function = self.pressure
                     
@@ -160,17 +186,17 @@ class OBC:
     def digit_manager(self, button_id, long_press):
         self.last_use = time.ticks_ms()
         if self.displayed_function.__name__ in ('set_hour', 'set_date', 'set_year', 'set_limit', 'set_odometer_thousands','set_odometer_hundreds', 'set_max_temperature','set_setting', 'set_language','set_clock_format', 'set_unit','set_display_brightness','set_sensors_nb','set_auto_off','set_backlight_brightness','set_gsensor_error'):
-            if not long_press:
+            if not long_press: 
                 digit_map = {10: 1000, 11: 100, 12: 10, 13:1}
                 self.digit_pressed = digit_map.get(button_id)
-            else:
+            else: # Long presses decrements the digit by their corresponding values
                 digit_map = {10: -1000, 11: -100, 12: -10,13:-1}
                 self.digit_pressed = digit_map.get(button_id)
-            logging.info(f"> Pressed digit: {self.digit_pressed}")
         else:
+            # Setting menu accessed by simultaneously pressing 1000 + 10 
             if (button_id == 10 and not self.button12.pin.value()) or (button_id == 12 and not self.button10.pin.value()):
                 self.displayed_function = self.set_setting
-                self.display.fill()
+                self.display.fill() #To check for potential dead pixels
                 self.display.show()
                 time.sleep_ms(2000)
 
@@ -272,7 +298,9 @@ class OBC:
                 self.can_switch_function = True
             
             elif self.displayed_function.__name__ == 'set_setting':
-                setting_functions = [self.set_language,self.set_clock_format,self.set_unit,self.sw_update,self.set_display_brightness,self.set_sensors_nb,self.set_auto_off,self.set_backlight_brightness,self.set_gsensor_error]
+                setting_functions = [self.set_language,self.set_clock_format,self.set_unit,
+                                     self.sw_update,self.set_display_brightness,self.set_sensors_nb,
+                                     self.set_auto_off,self.set_backlight_brightness,self.set_gsensor_error] #AJOUTER SET_LOGGING
                 try:
                     self.displayed_function = setting_functions[self.setting_index]
                 except IndexError:
@@ -286,7 +314,7 @@ class OBC:
             
             logging.info(f"> Displayed function: {self.displayed_function.__name__}")
        
-        else:
+        else: # Power-off if set is long pressed 
             if self.can_switch_function:
                 self.power_handler()
                 
@@ -297,7 +325,7 @@ class OBC:
             self.display.put_text(text)
             self.display.show()
 
-    def show_function_name(self, button):
+    def show_function_name(self, button): # Shows function's name when corresponding button is pressed
         now = time.ticks_ms()
         if time.ticks_diff(now, button.current_press['release']) < 700:
             return True
@@ -333,18 +361,18 @@ class OBC:
             minute += minute_change
             hour = hour % 24
             minute = minute % 60
-            current_time = (year, month, day, week_day, hour, minute, second, ms)
+            current_time = (year, month, day, hour, minute, second, week_day)
             self.rtc.datetime(current_time)
             self.digit_pressed = 0
-        self.show_hour(current_time)
+        self.show_hour(self.rtc.datetime())
 
     def show_hour(self, time_to_show):
         minute = "{:02d}".format(time_to_show[5])
         second = time_to_show[6]
         if access_data('clock_format') == 24:
             hour = "{:02d}".format(time_to_show[4])
-            if second % 2 == 0:
-                self.show(' ' + hour + '.' + minute)
+            if second % 2 == 0:  # Makes the dot blink
+                self.show(' ' + hour + '.' + minute) 
             else:
                 self.show(' ' + hour + minute)
         else:
@@ -379,8 +407,8 @@ class OBC:
 
         if self.digit_pressed in digit_mapping:
             year += digit_mapping[self.digit_pressed]
-            if year > 2100 or year < 1986:
-                year = 2023
+            if year > 2100 or year < 1986: # I hope one OBC makes it to 2100!
+                year = 2025
             current_time = (year, month, day, week_day, hour, minute, second, ms)
             self.rtc.datetime(current_time)
             self.digit_pressed = 0
@@ -419,7 +447,7 @@ class OBC:
             self.show(str(date_to_show[0]))
         else:
             months = self.words['months']
-            day = date_to_show[2]
+            day = date_to_show[2] 
             month = date_to_show[1]
             month_str = months[month - 1]
 
@@ -463,9 +491,9 @@ class OBC:
             if self.digit_pressed in digit_mapping:
                 delta = digit_mapping[self.digit_pressed]
                 if self.digit_pressed in [-1, -10, -100] and self.speed_limit % 10 != 0:
-                    self.speed_limit -= self.speed_limit % 100 % 10
+                    self.speed_limit -= self.speed_limit % 100 % 10 #TODO: Check why this is even for?
                 self.speed_limit += delta
-                if self.speed_limit > 400 or self.speed_limit < 0:
+                if self.speed_limit > 400 or self.speed_limit < 0: # Doubt an e30 ever made it to 300
                     self.speed_limit = 0
                 self.digit_pressed = 0
             self.show(str(self.speed_limit) + self.unit.speed_acronym)
@@ -479,12 +507,13 @@ class OBC:
                 switching = True
                 if current_speed > self.speed_limit and self.speed_limit_is_active:
                     logging.car("> Entering overspeed at {current_speed}")
-                while current_speed > self.speed_limit and self.speed_limit_is_active:
+                while current_speed > self.speed_limit and self.speed_limit_is_active and self.gps.has_fix():
                     self.watchdog.feed()
+                    self.last_displayed_function = self.displayed_function
                     self.displayed_function = self.check_for_overspeed
                     gone_overspeed = True
                     self.can_switch_function = False
-                    self.display.blink_rate(1)
+                    self.display.blink_rate(1) #TODO: Make it blink faster?
                     switching = not switching
                     if switching:
                         self.show(self.words['LIMIT'])
@@ -498,13 +527,14 @@ class OBC:
                 if gone_overspeed:
                     self.display.blink_rate(0)
                     self.can_switch_function = True
-                    self.displayed_function = self.speed
+                    self.displayed_function = self.last_displayed_function
     
     def acceleration(self):
         if self.show_function_name(self.button3):
             self.show(self.words['ACCEL'])
         else:
             if self.gps.has_fix():
+                # if the acceleration timer is not running yet
                 if not self.acceleration_timer.is_running and self.acceleration_timer.start_time == None and not self.acceleration_timer.show_lap_time():
                     acceleration = self.mpu.accel
                     self.display.blink_rate(0)
@@ -517,6 +547,7 @@ class OBC:
                     if acceleration.x > 0.5 and self.gps.parsed.speed[2] < 2:
                         self.acceleration_timer.start()
                 else:
+                    # Acceleration timer is running
                     speed_target = 100 #kmh
                     if self.gps.parsed.speed[2] >= speed_target and self.acceleration_timer.is_running:
                         self.acceleration_timer.display_end_time = time.ticks_add(time.ticks_ms(),4000)
@@ -542,10 +573,12 @@ class OBC:
             if self.gps.has_fix():
                 if self.laptimer.is_running:
                     if self.laptimer.start_position is None:
-                        self.laptimer.set_start_position(self.gps.parsed)                          
+                        self.laptimer.set_start_position(self.gps.parsed)
+                    # Program goes faster than GPS updates, so we dismiss repetitive coordinates
                     if self.gps.parsed.longitude != self.gps.previous_place['longitude'] and self.gps.parsed.latitude != self.gps.previous_place['latitude']:
-                        self.laptimer.check_for_completed_lap(self.gps.parsed)
+                        self.laptimer.check_for_completed_lap(self.gps.parsed) 
                     
+                    # At the end of a lap, we display the time, the delay with the fastest lap (if any), and the number of laps. 
                     if self.laptimer.show_lap_time():
                         self.display.blink_rate(5)
                         self.can_switch_function = False
@@ -572,14 +605,11 @@ class OBC:
                         time_to_show = self.laptimer.get_elapsed_lap_time()
                         timer_str = self.laptimer.parse_time(time_to_show)
                     self.show(str(timer_str))
-                else:
+                else: # If lap timer is not running 
                     if self.laptimer.show_laps():
                         self.display.blink_rate(5)
                         self.can_switch_function = False
-                        if self.laptimer.number_of_lap < 10:
-                            timer_str = 'LAP  '+str(self.laptimer.number_of_lap)
-                        else:
-                            timer_str = 'LAP '+str(self.laptimer.number_of_lap)
+                        timer_str = "{:>6}".format(str(self.laptimer.number_of_lap))
                         
                     elif self.laptimer.show_lap_time():
                         self.display.blink_rate(5)
@@ -602,7 +632,7 @@ class OBC:
             value = round(value,1)
             if value%1!=0:
                 value_str = "{:>7}".format(value)
-            elif value < 100000:
+            elif value < 100000: # Wonder if there is  any >1Mkm miled e30s out there but hey
                 value_str = "{:>6}".format(value)
             self.show(str(value_str))
             
@@ -670,7 +700,7 @@ class OBC:
     
     def get_pressure(self):
         conversion_factor = 3.3 / 65535
-        read_voltage = self.pressure_adc.read_u16() * conversion_factor
+        read_voltage = self.adc.read_voltage(1) * conversion_factor
         real_voltage = abs(read_voltage*1.5)
         psi_pressure = (real_voltage-0.25)*150/4
         if psi_pressure < 4:
@@ -701,7 +731,7 @@ class OBC:
     def get_temperature(self,string):
         self.temp_power.high()
         conversion_factor = 3.3 / 65535
-        voltage = self.temp_adc.read_u16() * conversion_factor
+        voltage = self.adc.read_voltage(0) * conversion_factor
         self.temp_power.low()
         RNTC = 39600 * (( 1 / voltage ) - ( 10/33))
         A = 1.291780732 * 10 ** -3
@@ -793,9 +823,8 @@ class OBC:
                 self.displayed_function = self.temperature
     
     def get_voltage(self):
-        adc_value = self.battery_adc.read_u16() - 300
-        voltage = 3.3 * adc_value / 65535 
-        battery_voltage = voltage * (12000 + 3300) / 3300
+        adc_voltage = self.adc.read_voltage(2)
+        battery_voltage = adc_voltage * 3
         return battery_voltage
     
     def voltage(self):
@@ -1062,12 +1091,12 @@ class OBC:
     def power_handler(self):
         self.powered = not self.powered
         if self.powered:
-            logging.debug("System powered on")
+            logging.debug("> System powered on")
             self.pwr_pin.high()
             self.init_i2c()
             self.led.high()
         else:
-            logging.debug("System powered off")
+            logging.debug("> System powered off")
             self.display.clear()
             self.display.show()
             time.sleep_ms(50)
@@ -1077,9 +1106,8 @@ class OBC:
     def check_for_last_use(self):
         auto_off_delay = access_data('auto_off_delay')
         auto_off_delay = auto_off_delay * 60 * 60 * 1000
-        access_data("current_time",self.rtc.datetime())
         if time.ticks_diff(time.ticks_ms(),self.last_use) > auto_off_delay:
-            logging.debug(f"No activity for {auto_off_delay}ms")
+            logging.debug(f"> No activity for {auto_off_delay}ms")
             self.power_handler()
         
     def loop(self):
@@ -1088,7 +1116,7 @@ class OBC:
             if self.powered:
                 self.displayed_function()
                 if self.priority_counter == self.priority_interval[1] or  self.priority_counter == self.priority_interval[2]:
-                    self.gps.get_GPS_data()
+                    self.gps.get_GPS_data() #computing travelled distance
                 if self.priority_counter == self.priority_interval[2]:
                     self.check_for_last_use()
                     if self.speed_limit_is_active:
