@@ -36,7 +36,7 @@ from FOTA.ota import OTAUpdater      #
 import os                            #
 import logging                       #
 from ds3231 import DS3231            # Real time clock
-     
+                
 class OBC:
     def __init__(self):
         self.pwr_pin = Pin(0, Pin.OUT) # Used to latch power when ignition is off
@@ -437,7 +437,7 @@ class OBC:
                 day = 1
             if month > 12 or month < 1:
                 month = 1
-            current_time = (year, month, day, week_day, hour, minute, second, ms)
+            current_time = (year, month, day, hour, minute, second, week_day)
             self.rtc.datetime(current_time)
             self.digit_pressed = 0
         self.show_date(current_time, display_year=False)
@@ -976,7 +976,11 @@ class OBC:
                     time.sleep(2)
                     self.show('UPDATE')
                     time.sleep(2)
-                    ota_updater.download_update_and_reset()
+                    self.display.clear()
+                    self.display.show()
+                    if ota_updater.fetch_latest_code():
+                        ota_updater.update_no_reset() 
+                        ota_updater.update_and_reset()
                 else:
                     logging.debug("> No new updates available.")
                     self.show('LATEST')
@@ -1132,3 +1136,4 @@ class OBC:
 
 
 OBC()
+
