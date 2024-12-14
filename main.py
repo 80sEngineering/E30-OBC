@@ -16,7 +16,7 @@
 # OUT OF OR IN CONNECTION WITH THE FIRMWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # -----------------------------------------------------------------------------
-
+#PTITBITE
 import time
 from math import log
 import ht16k33_driver                # Display's driver
@@ -964,8 +964,12 @@ class OBC:
                 
             if is_connected_to_wifi():
                 logging.debug("> Entering update mode.")
-                firmware_url = "https://raw.githubusercontent.com/80sEngineering/MeshCataloger/"
-                ota_updater = OTAUpdater(firmware_url, "Viewer.py")
+                firmware_url = "https://github.com/80sEngineering/E30-OBC/"
+                files_to_update = ["button.py", "dictionnary.py", "ds3231.py", "fota_master.py",
+                                   "GPS_parser.py","ht16k33_driver.py","imu.py","logging.py",
+                                   "main.py", "mcp3208.py", "memory.py", "timer.py", "unit.py",
+                                   "vector3d.py","version.json"]
+                ota_updater = OTAUpdater(firmware_url, files_to_update)
                 ota_updater.check_for_updates()
                 if ota_updater.newer_version_available:
                     self.show('NEW'+'{:>3}'.format('V'+str(ota_updater.latest_version)))
