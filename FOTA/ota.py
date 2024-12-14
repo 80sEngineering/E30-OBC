@@ -43,19 +43,29 @@ class OTAUpdater:
         # Fetch the latest code from the repo.
         index = 0
         for firmware_url in self.firmware_urls:
-            response = urequests.get(firmware_url)
+            try:
+                gc.collect() #free some memory space
+                response = urequests.get(firmware_url)
+            except OSError:
+                logging.error(f'> Memory allocation failed for {filename}')
+                response.status_code = 404
             if response.status_code == 200:
                 filename = self.filenames[index]
                 logging.debug(f'> Fetched latest firmware code for {filename}, status: {response.status_code}')
-                gc.collect() #free some memory space
+                
                 with open('latest_code.py', 'w') as f:
-                    f.write(response.text)
-
-                logging.debug("> Updating device... ")
-                
-                # Overwrite the old code.
-                
-                os.rename('latest_code.py', filename)  
+                    try:
+                        gc.collect()
+                        f.write(response.text)
+                        writing_sucess = True
+                    except MemoryError:
+                        logging.error(f'> Memory allocation failed for {filename}')
+                        writing_sucess = False
+                 
+                if writing_sucess: 
+                    logging.debug("> Updating device... ")
+                    # Overwrite the old code.
+                    os.rename('latest_code.py', filename)  
 
             elif response.status_code == 404:
                 logging.error(f'> Firmware not found - {firmware_url}.')
@@ -65,13 +75,16 @@ class OTAUpdater:
         logging.debug('> Restarting device...')
         machine.reset()  # Reset the device to run the new code.            
             
-        
+          
     def check_for_updates(self):
         """ Check if updates are available."""
         
         logging.debug(f'> Checking for latest version... on {self.version_url}')
-        response = urequests.get(self.version_url)
-        
+        try:
+            response = urequests.get(self.version_url)
+        except OSError:
+            self.newer_version_available = False
+            return
         data = json.loads(response.text)
         
         logging.debug(f"> Data is: {data}, url is: {self.version_url}")
