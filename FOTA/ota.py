@@ -5,11 +5,13 @@ import json
 import machine
 from time import sleep
 import logging
+import gc
+           
 
 class OTAUpdater:
     """ This class handles OTA updates. It connects to the Wi-Fi, checks for updates, downloads and installs them."""
-    def __init__(self, repo_url, filename):
-        self.filename = filename
+    def __init__(self, repo_url, filenames):
+        self.filenames = filenames
         self.repo_url = repo_url
         if "www.github.com" in self.repo_url :
             logging.debug(f"> Updating {repo_url} to raw.githubusercontent")
@@ -19,7 +21,9 @@ class OTAUpdater:
             self.repo_url = self.repo_url.replace("github","raw.githubusercontent")            
         self.version_url = self.repo_url + 'main/version.json'
         logging.debug(f"> Version url is: {self.version_url}")
-        self.firmware_url = self.repo_url + 'main/' + filename
+        self.firmware_urls= []
+        for filename in self.filenames:
+            self.firmware_urls.append(self.repo_url + 'main/' + filename)
 
         # get the current version (stored in version.json)
         if 'version.json' in os.listdir():    
@@ -33,53 +37,34 @@ class OTAUpdater:
             with open('version.json', 'w') as f:
                 json.dump({'version': self.current_version}, f)
             
-    def fetch_latest_code(self)->bool:
-        """ Fetch the latest code from the repo, returns False if not found."""
+    def download_update_and_reset(self):
+        """ Fetch the latest code from the repo if found, updates, and reset"""
         
         # Fetch the latest code from the repo.
-        response = urequests.get(self.firmware_url)
-        if response.status_code == 200:
-            logging.debug(f'> Fetched latest firmware code, status: {response.status_code}')
-    
-            # Save the fetched code to memory
-            self.latest_code = response.text
-            return True
-        
-        elif response.status_code == 404:
-            logging.error(f'> Firmware not found - {self.firmware_url}.')
-            return False
+        index = 0
+        for firmware_url in self.firmware_urls:
+            response = urequests.get(firmware_url)
+            if response.status_code == 200:
+                filename = self.filenames[index]
+                logging.debug(f'> Fetched latest firmware code for {filename}, status: {response.status_code}')
+                gc.collect() #free some memory space
+                with open('latest_code.py', 'w') as f:
+                    f.write(response.text)
 
-    def update_no_reset(self):
-        """ Update the code without resetting the device."""
+                logging.debug("> Updating device... ")
+                
+                # Overwrite the old code.
+                
+                os.rename('latest_code.py', filename)  
 
-        # Save the fetched code and update the version file to latest version.
-        with open('latest_code.py', 'w') as f:
-            f.write(self.latest_code)
-        
-        # update the version in memory
-        self.current_version = self.latest_version
-
-        # save the current version
-        with open('version.json', 'w') as f:
-            json.dump({'version': self.current_version}, f)
-        
-        # free up some memory
-        self.latest_code = None
-
-        # Overwrite the old code.
-#         os.rename('latest_code.py', self.filename)
-
-    def update_and_reset(self):
-        """ Update the code and reset the device."""
-
-        logging.debug(f"> Updating device... (Renaming latest_code.py to {self.filename})", end="")
-
-        # Overwrite the old code.
-        os.rename('latest_code.py', self.filename)  
-
+            elif response.status_code == 404:
+                logging.error(f'> Firmware not found - {firmware_url}.')
+            index += 1
+            
         # Restart the device to run the new code.
         logging.debug('> Restarting device...')
-        machine.reset()  # Reset the device to run the new code.
+        machine.reset()  # Reset the device to run the new code.            
+            
         
     def check_for_updates(self):
         """ Check if updates are available."""
@@ -102,11 +87,3 @@ class OTAUpdater:
         logging.debug(f'> Newer version available: {self.newer_version_available}')    
         return self.newer_version_available
     
-    def download_and_install_update_if_available(self):
-        """ Check for updates, download and install them."""
-        if self.check_for_updates():
-            if self.fetch_latest_code():
-                self.update_no_reset() 
-                self.update_and_reset() 
-        else:
-            logging.debug(f'> No new updates available.')
