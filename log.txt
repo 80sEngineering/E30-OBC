@@ -1,152 +1,134 @@
-imer_function
-2024-11-26 11:24:47 [info     /  82kB] > Displayed function: timer_function
-2024-11-26 11:24:54 [info     /  95kB] > Displayed function: timer_function
-2024-11-26 11:25:00 [info     / 100kB] > Displayed function: timer_function
-2024-11-26 11:25:01 [info     /  90kB] > Displayed function: timer_function
-2024-11-26 11:25:02 [info     / 101kB] > Displayed function: odometer
-2024-11-26 11:25:04 [info     /  79kB] > Displayed function: lap_timer
-2024-11-26 11:25:06 [info     / 100kB] > Displayed function: hour
-2024-11-26 11:25:10 [info     /  89kB] > Displayed function: voltage
-2024-11-26 11:25:13 [info     /  86kB] > Displayed function: date
-2024-11-26 11:25:17 [info     / 100kB] > Displayed function: hour
-2024-11-26 11:25:20 [info     /  90kB] > Displayed function: voltage
-2024-11-26 11:25:21 [info     /  70kB] > Displayed function: g_sensor
-2024-11-26 11:25:25 [info     / 100kB] > Displayed function: voltage
-2024-11-26 11:25:30 [debug    /  72kB] System powered on
-2024-11-26 11:25:30 [info     /  69kB] > Brightness set to 10
-2024-11-26 11:25:30 [info     /  66kB] > Displayed function: hour
-2024-11-26 11:25:35 [info     /  96kB] > Displayed function: timer_function
-2024-11-26 11:25:36 [info     /  87kB] > Displayed function: timer_function
-2024-11-26 11:25:37 [info     /  78kB] > Displayed function: timer_function
-2024-11-26 11:25:40 [info     /  94kB] > Pressed digit: -10
-2024-11-26 11:25:40 [info     /  92kB] > Pressed digit: -1000
-2024-11-26 11:25:40 [info     /  88kB] > Pressed digit: 1
-2024-11-26 11:25:42 [info     / 103kB] > Displayed function: set_clock_format
-2024-11-26 11:25:47 [info     /  87kB] > Displayed function: set_setting
-2024-11-26 11:25:48 [info     /  73kB] > Pressed digit: 1
-2024-11-26 11:25:49 [info     /  96kB] > Pressed digit: 1
-2024-11-26 11:25:50 [info     /  93kB] > Displayed function: sw_update
-2024-11-26 11:25:51 [debug    /  85kB]   - connecting
-2024-11-26 11:25:55 [debug    /  83kB]   - connecting
-2024-11-26 11:26:21 [debug    /  82kB]   - connecting
-2024-11-26 11:26:24 [debug    /  80kB]   - connecting
-2024-11-26 11:26:26 [debug    /  78kB] > Connected to wifi, IP address 192.168.1.135
-2024-11-26 11:26:31 [debug    /  76kB] > Entering update mode.
-2024-11-26 11:26:31 [debug    / 102kB] > Version url is: https://raw.githubusercontent.com/80sEngineering/MeshCataloger/main/version.json
-2024-11-26 11:26:31 [debug    /  98kB] > Current device firmware version is 2
-2024-11-26 11:26:31 [debug    /  96kB] > Checking for latest version... on https://raw.githubusercontent.com/80sEngineering/MeshCataloger/main/version.json
-2024-11-26 11:26:32 [debug    /  93kB] > Data is: {'version': 2}, url is: https://raw.githubusercontent.com/80sEngineering/MeshCataloger/main/version.json
-2024-11-26 11:26:32 [debug    /  91kB] > Latest version is: 2
-2024-11-26 11:26:32 [debug    /  89kB] > Newer version available: False
-2024-11-26 11:26:32 [debug    /  87kB] > No new updates available.
-2024-11-26 11:26:37 [info     /  82kB] > Brightness set to 5
-2024-11-26 11:26:37 [info     / 100kB] > Brightness set to 10
-2024-11-26 11:26:37 [info     /  95kB] > Brightness set to 10
-2024-11-26 11:26:37 [info     /  77kB] > Brightness set to 5
-2024-11-26 11:26:37 [info     /  72kB] > Brightness set to 5
-2024-11-26 11:26:37 [debug    /  71kB] > Resetting...
-2021-01-01 00:00:03 [info     / 100kB] > Brightness set to 10
-2024-11-26 11:25:51 [info     /  90kB] > System initialized
-2024-11-26 19:07:32 [info     / 102kB] > Brightness set to 10
-2024-11-26 11:25:54 [info     /  92kB] > System initialized
-2024-11-26 11:25:56 [info     /  87kB] > Displayed function: set_hour
-2024-11-26 11:26:01 [info     /  93kB] > Pressed digit: 100
-2024-11-26 11:26:01 [error    /  91kB] > Data clock_format not found
-2024-11-26 12:26:02 [info     /  85kB] > Pressed digit: 100
-2024-11-26 13:26:01 [info     /  96kB] > Pressed digit: 100
-2024-11-26 14:26:04 [info     /  77kB] > Pressed digit: 100
-2024-11-26 15:26:01 [info     /  87kB] > Pressed digit: 100
-2024-11-26 16:26:01 [info     / 101kB] > Pressed digit: 100
-2024-11-26 17:26:01 [info     /  71kB] > Pressed digit: 100
-2024-11-26 18:26:01 [info     /  72kB] > Pressed digit: 100
-2024-11-26 18:26:01 [error    /  70kB] > Data clock_format not found
-2024-11-26 19:26:37 [info     /  96kB] > Pressed digit: 10
-2024-11-26 19:36:02 [info     /  95kB] > Pressed digit: -10
-2024-11-26 19:26:02 [info     /  84kB] > Pressed digit: 10
-2024-11-26 19:36:03 [info     /  73kB] > Pressed digit: -10
-2024-11-26 19:26:03 [info     /  87kB] > Pressed digit: -10
-2024-11-26 19:16:04 [info     /  92kB] > Pressed digit: -10
-2024-11-26 19:06:01 [info     /  87kB] > Pressed digit: 1
-2024-11-26 19:07:01 [info     /  70kB] > Pressed digit: 1
-2024-11-26 19:07:01 [error    /  68kB] > Data clock_format not found
-2024-11-26 19:08:11 [info     /  70kB] > Displayed function: hour
-2024-11-26 19:08:17 [info     /  76kB] > Displayed function: date
-2024-11-26 19:08:20 [info     /  84kB] > Displayed function: hour
-2024-11-26 19:09:22 [error    /  69kB] > Data clock_format not found
-2024-11-26 19:09:22 [error    /  80kB] > Data clock_format not found
-2024-11-26 19:10:33 [info     /  95kB] > Brightness set to 10
-2024-11-26 19:09:23 [info     /  96kB] > System initialized
-2024-11-26 19:09:25 [info     /  83kB] > Displayed function: speed
-2024-11-26 19:09:26 [info     /  74kB] > Displayed function: odometer
-2024-11-26 19:09:28 [info     /  98kB] > Displayed function: hour
-2024-11-26 19:09:29 [info     / 102kB] > Displayed function: set_hour
-2024-11-26 19:09:31 [info     /  69kB] > Pressed digit: 1
-2024-11-26 19:10:01 [info     /  86kB] > Pressed digit: 1
-2024-11-26 19:11:01 [info     /  77kB] > Pressed digit: 1
-2024-11-26 19:12:01 [info     /  99kB] > Pressed digit: 1
-2024-11-26 19:13:01 [info     /  85kB] > Pressed digit: 1
-2024-11-26 19:14:01 [info     / 103kB] > Pressed digit: 1
-2024-11-26 19:15:01 [info     /  91kB] > Pressed digit: 1
-2024-11-26 19:16:01 [info     /  76kB] > Pressed digit: 1
-2024-11-26 19:17:01 [info     /  99kB] > Pressed digit: 1
-2024-11-26 19:18:01 [info     /  90kB] > Pressed digit: 1
-2024-11-26 19:19:01 [info     /  92kB] > Pressed digit: 10
-2024-11-26 19:29:01 [info     /  90kB] > Pressed digit: 10
-2024-11-26 19:39:01 [info     /  95kB] > Pressed digit: 10
-2024-11-26 19:49:01 [info     /  98kB] > Pressed digit: 10
-2024-11-26 19:59:02 [info     / 102kB] > Pressed digit: 1000
-2024-11-26 05:59:01 [info     / 102kB] > Pressed digit: 1000
-2024-11-26 15:59:01 [info     / 102kB] > Pressed digit: 100
-2024-11-26 16:59:01 [info     /  79kB] > Pressed digit: 100
-2024-11-26 17:59:01 [info     / 102kB] > Pressed digit: 100
-2024-11-26 18:59:01 [info     /  88kB] > Pressed digit: 100
-2024-11-26 19:59:01 [info     /  75kB] > Pressed digit: 100
-2024-11-26 20:59:01 [info     /  88kB] > Pressed digit: 100
-2024-11-26 21:59:01 [info     /  73kB] > Pressed digit: 100
-2024-11-26 22:59:01 [info     /  95kB] > Pressed digit: 100
-2024-11-26 23:59:01 [info     /  83kB] > Pressed digit: 100
-2024-11-26 00:59:01 [info     /  90kB] > Pressed digit: 100
-2024-11-26 01:59:01 [info     /  76kB] > Pressed digit: 100
-2024-11-26 02:59:01 [info     /  90kB] > Pressed digit: 100
-2024-11-26 03:59:01 [info     / 102kB] > Pressed digit: 100
-2024-11-26 04:59:01 [info     /  73kB] > Pressed digit: 100
-2024-11-26 05:59:01 [info     /  90kB] > Pressed digit: 100
-2024-11-26 06:59:01 [info     /  72kB] > Pressed digit: 100
-2024-11-26 07:59:01 [info     /  89kB] > Pressed digit: 100
-2024-11-26 08:59:01 [info     / 102kB] > Pressed digit: 100
-2024-11-26 09:59:01 [info     /  83kB] > Pressed digit: 100
-2024-11-26 10:59:01 [info     /  99kB] > Pressed digit: 100
-2024-11-26 11:59:01 [info     /  80kB] > Pressed digit: 100
-2024-11-26 12:59:01 [info     / 102kB] > Pressed digit: 100
-2024-11-26 13:59:01 [info     /  81kB] > Pressed digit: 100
-2024-11-26 14:59:01 [info     /  94kB] > Pressed digit: 100
-2024-11-26 15:59:01 [info     /  77kB] > Pressed digit: 100
-2024-11-26 16:59:01 [info     /  90kB] > Pressed digit: 100
-2024-11-26 17:59:01 [info     /  72kB] > Pressed digit: 100
-2024-11-26 18:59:01 [info     /  92kB] > Pressed digit: 100
-2024-11-26 19:59:01 [info     /  78kB] > Pressed digit: 10
-2024-11-26 19:09:01 [info     /  69kB] > Pressed digit: 10
-2024-11-26 19:19:01 [info     / 102kB] > Pressed digit: 1
-2024-11-26 19:20:01 [info     /  88kB] > Pressed digit: 1
-2024-11-26 19:21:01 [info     / 102kB] > Pressed digit: 1
-2024-11-26 19:22:01 [info     /  77kB] > Pressed digit: 1
-2024-11-26 19:23:01 [info     /  89kB] > Pressed digit: 1
-2024-11-26 19:24:01 [info     /  99kB] > Pressed digit: 1
-2024-11-26 19:25:01 [info     /  73kB] > Pressed digit: 1
-2024-11-26 19:26:05 [info     /  90kB] > Pressed digit: -10
-2024-11-26 19:15:02 [info     / 100kB] > Pressed digit: -1
-2024-11-26 19:14:02 [info     /  82kB] > Pressed digit: -1
-2024-11-26 19:12:02 [info     /  93kB] > Pressed digit: -1
-2024-11-26 19:11:02 [info     /  90kB] > Displayed function: hour
-2024-11-26 19:11:03 [info     /  84kB] > Displayed function: timer_function
-2024-11-26 19:11:07 [info     /  84kB] > Displayed function: timer_function
-2024-11-26 19:11:10 [info     /  87kB] > Displayed function: timer_function
-2024-11-26 19:11:11 [info     /  99kB] > Displayed function: timer_function
-2024-11-26 19:11:13 [info     /  78kB] > Displayed function: g_sensor
-2024-11-26 19:11:19 [info     /  69kB] > Displayed function: speed
-2024-11-26 19:11:21 [info     /  96kB] > Displayed function: hour
-2024-11-26 19:11:24 [info     /  73kB] > Displayed function: voltage
-2024-11-26 19:11:26 [info     /  81kB] > Displayed function: lap_timer
-2024-11-26 19:11:27 [info     /  74kB] > Displayed function: hour
-2024-11-26 19:11:49 [info     /  89kB] > Brightness set to 5
-2024-11-26 19:11:49 [info     /  84kB] > Brightness set to 5
+2000-01-01 05:19:19 [error    /  93kB] > Data clock_format not found
+2000-01-01 05:19:20 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:19:20 [error    / 100kB] > Data auto_off_delay not found
+2000-01-01 05:19:20 [debug    /  98kB] > No activity for 0ms
+2000-01-01 05:19:20 [error    /  95kB] > Data display_brightness not found
+2000-01-01 05:19:20 [debug    /  93kB] > System powered off
+2024-12-28 17:51:48 [error    /  97kB] > Data display_brightness not found
+2000-01-01 05:20:28 [error    / 100kB] > Data language not found
+2000-01-01 05:20:28 [error    /  97kB] > Data unit not found
+2000-01-01 05:20:28 [error    /  94kB] > Data language not found
+2000-01-01 05:20:28 [error    /  90kB] > Data wiring not found
+2000-01-01 05:20:28 [error    /  87kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  84kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  77kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  74kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  70kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  67kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    /  64kB] > Data clock_format not found
+2000-01-01 05:20:28 [error    / 100kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  96kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  93kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  86kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  83kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  76kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  73kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  69kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  66kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    / 100kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  96kB] > Data clock_format not found
+2000-01-01 05:20:29 [error    /  93kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  86kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  83kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  76kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  73kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  70kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  66kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  63kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  97kB] > Data clock_format not found
+2000-01-01 05:20:30 [error    /  93kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  87kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  69kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  66kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  63kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    / 100kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  96kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    /  93kB] > Data clock_format not found
+2000-01-01 05:20:31 [error    / 100kB] > Data auto_off_delay not found
+2000-01-01 05:20:32 [debug    /  98kB] > No activity for 0ms
+2000-01-01 05:20:32 [error    /  95kB] > Data display_brightness not found
+2000-01-01 05:20:32 [debug    /  93kB] > System powered off
+2000-01-01 05:20:54 [error    /  97kB] > Data display_brightness not found
+2000-01-01 05:20:54 [error    / 100kB] > Data language not found
+2000-01-01 05:20:54 [error    /  97kB] > Data unit not found
+2000-01-01 05:20:54 [error    /  94kB] > Data language not found
+2000-01-01 05:20:54 [error    /  90kB] > Data wiring not found
+2000-01-01 05:20:54 [error    /  87kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  84kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  77kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  74kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  70kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  67kB] > Data clock_format not found
+2000-01-01 05:20:54 [error    /  97kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  94kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  87kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  83kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  77kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  73kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  70kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  67kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  63kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    / 100kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  96kB] > Data clock_format not found
+2000-01-01 05:20:55 [error    /  93kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  86kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  83kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  76kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  73kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  70kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  66kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  63kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  97kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  94kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  90kB] > Data clock_format not found
+2000-01-01 05:20:56 [error    /  87kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  83kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  80kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  77kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  73kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  70kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  67kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    /  63kB] > Data clock_format not found
+2000-01-01 05:20:57 [error    / 100kB] > Data auto_off_delay not found
+2000-01-01 05:20:57 [debug    /  98kB] > No activity for 0ms
+2000-01-01 05:20:57 [error    /  95kB] > Data display_brightness not found
+2000-01-01 05:20:58 [debug    /  79kB] > System powered off
+2000-01-01 05:21:04 [debug    /  77kB] > System powered on
+2000-01-01 05:49:25 [debug    /  95kB] > System powered off
+2000-01-01 05:52:54 [debug    /  94kB] > System powered on
+2000-01-01 05:52:54 [debug    /  98kB] > System powered off
+2000-01-01 05:54:02 [debug    /  90kB] > System powered off
+2000-01-01 05:55:19 [debug    /  98kB] > System powered off
+2000-01-01 05:57:21 [debug    /  98kB] > System powered off
+2000-01-01 05:58:34 [debug    /  91kB] > System powered off
+2000-01-01 05:59:36 [debug    /  87kB] > System powered off
+2000-01-01 06:03:53 [debug    /  75kB] > System powered off
+2000-01-01 06:04:26 [debug    /  98kB] > System powered off
+2000-01-01 06:07:03 [debug    /  83kB] > System powered off
+2000-01-01 06:08:50 [debug    /  83kB] > System powered off
+2000-01-01 06:11:13 [debug    /  98kB] > System powered off
+2000-01-01 06:12:25 [debug    /  68kB] > System powered off
+2021-01-01 00:00:05 [warning  / 102kB]  > WARNING: Oscillator stop flag set. Time may not be accurate.
+2000-01-01 00:00:05 [debug    /  98kB] > System powered off
+2000-01-01 00:37:49 [debug    /  98kB] > System powered off
+2000-01-01 01:34:49 [error    /  96kB] > Setting clock_format not found
+2000-01-01 01:37:45 [error    /  95kB] > Setting auto_off_delay not found
+2000-01-01 01:37:45 [debug    /  93kB] > No activity for 0ms
+2000-01-01 01:37:45 [debug    /  90kB] > System powered off
+2000-01-01 01:42:26 [error    /  93kB] > Setting auto_off_delay not found
+2000-01-01 01:42:26 [debug    /  91kB] > No activity for 0ms
+2000-01-01 01:42:26 [debug    /  88kB] > System powered off
+2000-01-01 01:51:17 [error    /  92kB] > Setting auto_off_delay not found
+2000-01-01 01:51:18 [debug    /  91kB] > No activity for 0ms
+2000-01-01 01:51:18 [debug    /  88kB] > System powered off

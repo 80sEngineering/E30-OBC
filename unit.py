@@ -1,4 +1,4 @@
-from memory import access_data
+from memory import access_setting
 
 class Unit:
     def __init__(self,system):
@@ -11,7 +11,7 @@ class Unit:
         self.update()
         
     def update(self):
-        self.language = access_data("language")
+        self.language = access_setting("language")
         self.set_speed_acronym()
         self.set_speed_index()
         self.set_pressure_acronym()

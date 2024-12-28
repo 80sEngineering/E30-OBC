@@ -9,9 +9,9 @@ LOG_ERROR = 0b000100
 LOG_DEBUG = 0b001000
 LOG_EXCEPTION = 0b010000
 LOG_CAR = 0b100000
-LOG_ALL = LOG_WARNING | LOG_ERROR | LOG_DEBUG | LOG_EXCEPTION | LOG_CAR
+LOG_ALL = LOG_INFO | LOG_WARNING | LOG_ERROR | LOG_DEBUG | LOG_EXCEPTION | LOG_CAR
 
-_logging_types = LOG_ALL
+_logging_types = 0b111110
 
 # the log file will be truncated if it exceeds _log_truncate_at bytes in
 # size. the defaults values are designed to limit the log to at most
@@ -35,6 +35,7 @@ def set_truncate_thresholds(truncate_at, truncate_to):
   _log_truncate_at = truncate_at
   _log_truncate_to = truncate_to
 
+
 def enable_logging_types(types):
   global _logging_types
   _logging_types = _logging_types | types
@@ -42,6 +43,10 @@ def enable_logging_types(types):
 def disable_logging_types(types):
   global _logging_types
   _logging_types = _logging_types & ~types
+  
+def disable_all_logging():
+    global _logging_types
+    _logging_types = 0
 
 # truncates the log file down to a target size while maintaining
 # clean line breaks

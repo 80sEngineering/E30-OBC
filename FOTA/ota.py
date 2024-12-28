@@ -88,8 +88,7 @@ class OTAUpdater:
         data = json.loads(response.text)
         
         logging.debug(f"> Data is: {data}, url is: {self.version_url}")
-        # Turn list to dict using dictionary comprehension
-#         my_dict = {data[i]: data[i + 1] for i in range(0, len(data), 2)}
+
         
         self.latest_version = int(data['version'])
         logging.debug(f'> Latest version is: {self.latest_version}')

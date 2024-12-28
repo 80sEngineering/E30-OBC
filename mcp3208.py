@@ -9,7 +9,10 @@ class MCP3208:
         self._ref_voltage = ref_voltage
     
     def read_value(self, pin):
-        config_bits = bytearray([208,0x00,0x00])
+        cmd = 128  # 1000 0000
+        cmd += 64  # 1100 0000
+        cmd += ((pin & 0x07) << 3)
+        config_bits = bytearray([cmd,0x00,0x00])
         response = bytearray(3)
         self.cs.value(0) 
         self._spi.write_readinto(config_bits, response)

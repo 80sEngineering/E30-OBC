@@ -6,14 +6,14 @@ Modified from :
 """
 
 from math import floor, modf, radians , sin , cos , acos
-from machine import UART
-from memory import access_data
+from machine import UART, Pin
+from memory import access_setting
 import utime
 import logging
 
 class GPS_handler:
     def __init__(self):
-        self.uart = UART(0, baudrate=115200 ,stop = 1, parity = None, bits = 8 )
+        self.uart = UART(0, baudrate=115200 , rx=Pin(1), tx=Pin(12), stop = 1, parity = None, bits = 8 )
         self.parsed = MicropyGPS()
         self.previous_place = {'longitude' : self.parsed.longitude, 'latitude': self.parsed.latitude,'time':0}
          
@@ -36,11 +36,11 @@ class GPS_handler:
                 
     def get_distance(self):
         speedms = self.parsed.speed[2]/3.6
-        odometer_value = access_data('odometer')
+        odometer_value = access_setting('odometer')
         if self.previous_place['time'] and self.parsed.speed[2] > 4:
             odometer_value += (speedms * ((self.parsed.fix_time - self.previous_place['time'])/1000))/1000
             data_to_write = {'odometer':odometer_value}
-            access_data(None, data_to_write)
+            access_setting(None, data_to_write)
         self.previous_place['time'] = self.parsed.fix_time
                 
     def has_fix(self):
