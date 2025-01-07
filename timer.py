@@ -2,7 +2,7 @@ import time
 import math
 import logging
 
-class Timer:
+class Timer_:
     def __init__(self):
         self.start_time = None
         self.lap_start = None
@@ -76,9 +76,9 @@ class Timer:
         return timer_str
             
     
-class LapTimer(Timer):
+class LapTimer(Timer_):
     def __init__(self):
-        Timer.__init__(self)
+        Timer_.__init__(self)
         self.start_position = None
         self.previous_update = {'distance':0,'timestamp':None}
         self.number_of_lap = 1

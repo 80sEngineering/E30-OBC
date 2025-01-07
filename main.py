@@ -26,10 +26,10 @@ from imu import MPU6050              # Accelerometer
 from mcp3208 import MCP3208          # Analog to digital converter
 from dictionnary import Dictionnary  # Used for translations
 from unit import Unit                # Handles metric to imperial conversions
-from machine import I2C, Pin, RTC, WDT, SPI, ADC
-from timer import Timer, LapTimer    #
+from machine import I2C, Pin, RTC, WDT, SPI, ADC, time_pulse_us, Timer
+from timer import Timer_, LapTimer    #
 import ujson as json                 #
-from memory import access_setting       #
+from memory import access_setting    #
 import fota_master                   # Handles Over The Air Firmware updates
 from FOTA import connect_to_wifi, is_connected_to_wifi, server
 from FOTA.ota import OTAUpdater      #
@@ -37,23 +37,32 @@ import os                            #
 import logging                       #
 from ds3231 import DS3231            # Real time clock
 import gc                            # Garbage collector, used to free up unused memory
+import injector_pulse_analyzer       #
+from rp2 import StateMachine         # StateMachine allow for PIO support, used in fuel consumption
+                                     # for precise timing of injector pulses
                 
 class OBC:
     def __init__(self):
 
         self.pwr_pin = Pin(0, Pin.OUT) # Used to latch power on/off
         self.pwr_pin.high()
-        self.accy = Pin(28, Pin.IN, Pin.PULL_DOWN)
+        self.accy = ADC(Pin(28, Pin.IN))
         self.powered = True
         self.led = Pin("LED", Pin.OUT) #RPi's internal LED
         self.led.high()
         self.init_communication() # Initiates I2C and SPI communication to RTC, display, MPU and ADC
-        self.display.brightness(access_setting('display_brightness'))
-        self.display.fill()
-        self.display.show()
         
-        while Pin(20, Pin.IN, Pin.PULL_DOWN).value(): #Prevents unwanted SET press when powering-on
-            pass
+        if self.get_ignition_status():
+            self.power_on_trigger = 'Ignition'
+        else:
+            self.power_on_trigger = 'SET_press'
+            self.display.fill()
+            self.display.show()
+            while Pin(20, Pin.IN, Pin.PULL_DOWN).value(): #Prevents unwanted SET press when powering-on
+                pass
+                
+        
+        self.display.brightness(access_setting('display_brightness'))
         
         #self.buttonX = Button(pin_number, button_id, function)
         self.button1 = Button(4, 1, self.function_manager)
@@ -83,9 +92,9 @@ class OBC:
         self.rpi_rtc = RTC()   
         self.rpi_rtc.datetime(self.rtc.datetime())
 
-        self.timer = Timer()
+        self.timer = Timer_()
         self.laptimer = LapTimer()
-        self.acceleration_timer = Timer()
+        self.acceleration_timer = Timer_()
 
         self.gps = GPS_handler()
         self.speed_limit = 0
@@ -98,20 +107,41 @@ class OBC:
         unit = access_setting("unit")
         self.unit = Unit(unit)
         self.wiring = access_setting("wiring")
+        
         self.cabin_light = Pin(22, Pin.IN, Pin.PULL_DOWN)
         self.cabin_light.irq(handler = self.cabin_light_handler, trigger = Pin.IRQ_RISING | Pin.IRQ_FALLING)
+        
+        if self.wiring == "OBC": #fuel related inits
+            self.injector_pulse = Pin(27, Pin.IN)
+            self.injector_cc = access_setting("inj_cc")
+            self.cyl_nb = access_setting("cyl_nb")
+            self.inj_cal = access_setting("inj_cal")
+            self.sm0 = StateMachine(0, injector_pulse_analyzer.pulse_width, in_base=self.injector_pulse, jmp_pin=self.injector_pulse)
+            self.sm1 = StateMachine(1, injector_pulse_analyzer.period, in_base=self.injector_pulse, jmp_pin=self.injector_pulse)
+            self.new_sample = False
+            self.sm0.irq(self.pulseIrqHandler)
+            # The statemachine enters an infinite loop if the engine is stopped,
+            # so we use an interrupt system to check if injector pulse is detected
+            self.sm0.active(1)
+            self.sm1.active(1)
+    
+            
+
         self.setting_index = 0 # Used in the setting menu, accessed by simultaneously pressing 1000 and 10.
         
         self.displayed_function = self.hour # self.displayed_function is what the infinite loop is contineously running
-        
         self.last_displayed_function = None
+        
         self.last_use = time.ticks_ms() # Used for auto-off
         self.can_switch_function = True
+        
         # Used to periodically schedule tasks in order to optimize ressources
         self.priority_counter = 0 
         self.priority_interval = [1,20,40]
-        #self.watchdog = WDT(timeout=5000) 
+        #self.watchdog = WDT(timeout=5000)
+        
         logging.info('> System initialized!')
+        
         self.loop()
     
 # -------------------------SYSTEM RELATED FUNCTIONS----------------------------
@@ -120,13 +150,15 @@ class OBC:
         i2c = I2C(id=1, sda=Pin(2), scl=Pin(3), freq = 115200)
         self.rtc = DS3231(i2c)
         self.display = ht16k33_driver.Seg14x4(i2c)
+        self.display.clear()
+        self.display.show()
         self.mpu = MPU6050(i2c, device_addr = 1)
         spi = SPI(0, sck=Pin(18),mosi=Pin(19),miso=Pin(16), baudrate=50000)
         spi_cs = Pin(17, Pin.OUT)
         self.adc = MCP3208(spi, spi_cs)
     
     
-    def power_handler(self):
+    def power_handler(self,trigger = None):
         self.powered = not self.powered
         if self.powered:
             logging.debug("> System powered on")
@@ -134,18 +166,22 @@ class OBC:
             self.init_communication()
             self.led.high()
         else:
-            while self.cabin_light_handler() and not self.button9.pin.value():
+            while self.cabin_light_handler() and not self.button9.pin.value() and not self.get_ignition_status():                
                 self.display.put_text('LIGHTS') #TODO: DICTIONNARY FOR LIGHT
                 self.display.show()
                 self.display.blink_rate(1)
                 time.sleep_ms(50)
-            logging.debug("> System powered off")
-            self.display.clear()
-            self.display.blink_rate(0)
-            self.display.show()
-            time.sleep_ms(50)
-            self.pwr_pin.low()
-            self.led.low()
+            if not self.get_ignition_status() or trigger == "SET_press":
+                logging.debug("> System powered off")
+                self.display.clear()
+                self.display.blink_rate(0)
+                self.display.show()
+                time.sleep_ms(50)
+                self.pwr_pin.low()
+                self.led.low()
+            else:
+                self.display.blink_rate(0)
+                self.powered = True
             
             
     def check_for_last_use(self):
@@ -168,12 +204,11 @@ class OBC:
             return False
     
     
-    def ignition_manager(self): #TODO: TROUBLESHOOTING: IRQ based ignition management will be done with upcoming PCB
-        adc_value = ADC(Pin(28, Pin.IN)).read_u16()
+    def get_ignition_status(self): #TODO: TROUBLESHOOTING: IRQ based ignition management will be done with upcoming PCB
+        adc_value = self.accy.read_u16()
         voltage = adc_value * 3.3 / 65535
-        if voltage < 1: #Ignition OFF
-            self.power_handler()
-        #TODO: Deal with ignition off -> on with lights. 
+        return voltage > 1 #Ignition OFF
+
     
     
     def available_function_manager(self, functions_list): # Only enables functions availabe with the present car's wiring and sensors
@@ -184,7 +219,7 @@ class OBC:
         if self.wiring == 'A.CLOCK':
             functions_list.remove(self.out_temperature)
         if self.wiring != 'OBC':
-            fuel_related_functions = [self.fuel_range, self.remaining_fuel, self.fuel_consumption]
+            fuel_related_functions = [self.fuel_range, self.remaining_fuel, self.inst_hourly_fuel_cons, self.inst_mpg]
             for function in fuel_related_functions:
                 if function in functions_list:
                     functions_list.remove(function)
@@ -195,9 +230,9 @@ class OBC:
         self.digit_pressed = 0
         if not self.powered: # Wakes up the OBC if stalk is pressed
             self.power_handler()
-            
-        supported_functions = [self.hour, self.date, self.speed, self.acceleration, self.laptimer, self.fuel_consumption,
-                               self.fuel_range, self.remaining_fuel, self.odometer, self.timer_function, self.pressure,
+            return 
+        supported_functions = [self.hour, self.date, self.speed, self.acceleration, self.lap_timer, self.inst_hourly_fuel_cons,
+                               self.inst_mpg, self.fuel_range, self.remaining_fuel, self.odometer, self.timer_function, self.pressure,
                                self.oil_temperature, self.out_temperature, self.voltage, self.altitude, self.heading, self.g_sensor]
         
         available_functions = self.available_function_manager(supported_functions)
@@ -208,7 +243,7 @@ class OBC:
                 self.displayed_function = available_functions[(index+1) % len(available_functions)]
             else:
                 if index == 0:
-                    self.displayed_function = available_functions[len(available_functions - 1)]
+                    self.displayed_function = available_functions[len(available_functions) - 1]
                 else:
                     self.displayed_function = available_functions[(index-1) % len(available_functions)]
             
@@ -239,9 +274,9 @@ class OBC:
 
             elif button_id == 5:
                 if self.wiring == "OBC":
-                    fuel_related_functions = [self.fuel_consumption, self.fuel_range, self.remaining_fuel, self.odometer]
+                    fuel_related_functions = [self.inst_hourly_fuel_cons, self.inst_mpg, self.fuel_range, self.remaining_fuel, self.odometer]
                     if not self.displayed_function in fuel_related_functions or self.displayed_function == self.odometer:
-                        self.displayed_function = self.fuel_consumption
+                        self.displayed_function = self.inst_hourly_fuel_cons
                     else:
                         index = fuel_related_functions.index(self.displayed_function)
                         if not long_press:
@@ -303,10 +338,11 @@ class OBC:
 
     def digit_manager(self, button_id, long_press):
         self.last_use = time.ticks_ms()
-        if self.displayed_function.__name__ in ('set_hour', 'set_date', 'set_year', 'set_limit', 'set_odometer_thousands',
-                                                'set_odometer_hundreds', 'set_max_oil_temperature','set_setting', 'set_language',
-                                                'set_clock_format', 'set_unit','set_wiring','set_display_brightness','set_sensors',
-                                                'set_auto_off','set_gsensor_error', 'set_logging'):
+        if self.displayed_function in (self.set_hour, self.set_date, self.set_year, self.set_limit, self.set_odometer_thousands,
+                                       self.set_odometer_hundreds, self.set_max_oil_temperature, self.set_setting, self.set_language,
+                                       self.set_clock_format, self.set_unit,self.set_wiring,self.set_display_brightness,self.set_sensors,
+                                       self.set_auto_off,self.set_gsensor_error, self.set_logging, self.set_injector_cc, self.set_cyl_nb,
+                                       self.set_injector_calibration):
             if not long_press: 
                 digit_map = {10: 1000, 11: 100, 12: 10, 13:1}
                 self.digit_pressed = digit_map.get(button_id)
@@ -324,6 +360,12 @@ class OBC:
     def set_reset(self, button_id, long_press):
         self.last_use = time.ticks_ms()
         self.digit_pressed = 0
+        setting_functions = [self.set_language, self.set_clock_format, self.set_unit,
+                     self.sw_update, self.set_display_brightness, self.set_sensors,
+                     self.set_wiring, self.set_auto_off, self.set_gsensor_error,
+                     self.set_logging, self.set_injector_cc, self.set_cyl_nb,
+                     self.set_injector_calibration]
+
         if not long_press:
             if not self.powered:
                 self.power_handler()
@@ -419,9 +461,6 @@ class OBC:
                 self.can_switch_function = True
             
             elif self.displayed_function == self.set_setting:
-                setting_functions = [self.set_language, self.set_clock_format, self.set_unit,
-                                     self.sw_update, self.set_display_brightness, self.set_sensors,
-                                     self.set_wiring, self.set_auto_off, self.set_gsensor_error, self.set_logging]
                 try:
                     self.displayed_function = setting_functions[self.setting_index]
                 except IndexError:
@@ -430,17 +469,14 @@ class OBC:
             elif self.displayed_function == self.sw_update:
                 fota_master.machine_reset()
                 
-            elif self.displayed_function.__name__ in ['set_language','set_clock_format','set_unit',
-                                             'set_display_brightness','set_sensors', 'set_wiring',
-                                             'set_auto_off','set_gsensor_error','set_logging']:
-                
+            elif self.displayed_function in setting_functions:
                 self.displayed_function = self.set_setting
             
             logging.info(f"> Displayed function: {self.displayed_function.__name__}")
        
         else: # Power-off if set is long pressed 
             if self.can_switch_function:
-                self.power_handler()
+                self.power_handler(trigger = 'SET_press')
                 
         
     def show(self, text):
@@ -747,24 +783,71 @@ class OBC:
                     self.show(str(timer_str))
             else:
                 self.show(self.words['SIGNAL'])
+                
+    def pulseIrqHandler(self,sm):
+        if not self.new_sample:
+            self.new_sample = True
 
-    def fuel_consumption(self):
+    def get_hourly_fuel_cons(self):
+            time.sleep_ms(150) #timeout waiting for a new sample. Corresponds to 400rpm
+            if self.new_sample:
+                pulse_width = scale(self.sm0.get())
+                period = scale(self.sm1.get())
+                rpm = (1/(period/1000))* 60 
+                self.new_sample = False
+                print(f"rpm {rpm:.2f} period {period:.2f} pw {pulse_width:.2f}")
+
+                injector_cc_per_ms = self.injector_cc / 60_000 
+                fuel_per_pulse_cc = pulse_width * injector_cc_per_ms
+                total_fuel_per_rot_cc = fuel_per_pulse_cc * self.cyl_nb / 2
+                rotations_per_second = 1 / (period / 1_000)
+                fuel_per_second_cc = (self.inj_cal / 100) * total_fuel_per_rot_cc * rotations_per_second
+                fuel_per_hour_liters = (fuel_per_second_cc * 3600) / 1000 
+                #print(f"Period: {period:.2f} ms Frequency: {1000/period:.2f} Hz Pulse_width: {pulse_width:.2f}, L/h = {fuel_per_hour_liters:.2f}")
+            else:
+                fuel_per_hour_liters = 0
+            return fuel_per_hour_liters
+                
+    def inst_hourly_fuel_cons(self):
+        def scale(v):
+            return (1 + (v ^ 0xffffffff)) * 24e-6  # Scale to ms
+        
         if self.show_function_name(self.button5):
-            self.show('L/100') #TODO: Words for fuel
+            self.show(' L/H ') #TODO: Words for fuel
         else:
-            self.show('9L/100')
+            fuel_per_hour_liters = self.get_hourly_fuel_cons()
+            self.show("{:<2.1f} L/H".format(fuel_per_hour_liters))
+                
+
+    def inst_mpg(self):
+        if self.show_function_name(self.button5):
+            self.show('L/100 ') #TODO: Words for fuel
+        else:
+            fuel_per_hour_liters = self.get_hourly_fuel_cons()
+            speed_kmh = self.gps.parsed.speed[self.unit.speed_index]
+            if speed_kmh > 0:
+                fuel_per_100km = (fuel_per_hour_liters / speed_kmh) * 100
+            else:
+                fuel_per_100km = 0  
+            self.show("{:<3.1f}L/1.".format(fuel_per_100km))
+            
             
     def fuel_range(self):
         if self.show_function_name(self.button5):
             self.show('RANGE') #TODO: Words for fuel
         else:
-            self.show('318 KM')
+            self.show('9999KM')
 
     def remaining_fuel(self):
         if self.show_function_name(self.button5):
             self.show('FUEL')
         else:
-            self.show('42   L') 
+            if time.ticks_diff(time.ticks_ms(), self.refresh_rate_adjuster['timestamp']) > 500:
+                self.refresh_rate_adjuster['timestamp'] = time.ticks_ms()
+                voltage = self.adc.read_voltage(4)
+                fuel = 55*voltage/0.9
+                fuel_str = '{:<5}L'.format(round(fuel,0))
+                self.show(fuel_str) 
 
 
     def odometer(self):
@@ -869,12 +952,25 @@ class OBC:
         return temperature_str if temperature < 100 else ' ' + temperature_str
         
         
-    def get_oil_temperature(self,string):
-        voltage = self.adc.read_voltage(0)
-        RNTC = (5000/voltage) - 1000
-        A = 1.291780732 * 10 ** -3
-        B = 2.612878251 * 10 ** -4
-        C = 1.568295903 * 10 ** -7
+    def get_temperature(self, string, sensor):
+        if sensor == "oil":
+            voltage = self.adc.read_voltage(0)
+            try:
+                RNTC = (5000/voltage) - 1000
+            except ZeroDivisionError: #TODO: No sensor detection
+                RNTC = 10000            
+            A = 1.291780e-3
+            B = 2.612878e-4
+            C = 1.568296e-7
+        elif sensor == "out":
+            voltage = self.adc.read_voltage(3)
+            try:
+                RNTC = (voltage * 4.7) / (5 - voltage)
+            except ZeroDivisionError: #TODO: No sensor detection
+                RNTC = 10000
+            A = 1.327871e-3
+            B = 2.297980e-4
+            C = 1.375199e-7
         try:
             temperature = 1 /( A + B * log(RNTC) + C *(log(RNTC))**3)
         except:
@@ -902,7 +998,7 @@ class OBC:
                 self.show(' OFF  ')
         else:
             try:
-                self.refresh_rate_adjuster['values'].append(self.get_oil_temperature(False))
+                self.refresh_rate_adjuster['values'].append(self.get_temperature(False, "oil"))
             except MemoryError:
                 logging.exception(f"> MemoryError in self.refresh_rate_updater. Array lenght: {len(self.refresh_rate_adjuster['values'])}") 
             
@@ -912,7 +1008,7 @@ class OBC:
                     self.show(self.temperature_formatter(rounded_temperature))
                     self.refresh_rate_adjuster['values'].clear()
                 else:
-                    self.show(self.get_oil_temperature(True))
+                    self.show(self.get_temperature(True, "oil"))
                 self.refresh_rate_adjuster['timestamp'] = time.ticks_ms()
             
                     
@@ -932,7 +1028,7 @@ class OBC:
     
     def check_for_overheat(self):
         if not self.displayed_function == set_max_oil_temperature and self.can_switch_function:
-            oil_temperature = int(self.get_oil_temperature(False))
+            oil_temperature = int(self.get_temperature(False, "oil"))
             switching = True
             gone_overheat = False
             if oil_temperature > self.max_oil_temperature and self.oil_temperature_limit_is_active:
@@ -947,32 +1043,36 @@ class OBC:
                     self.show(self.words['TEMP'])
                 else:
                     if time.ticks_diff(time.ticks_ms(), self.refresh_rate_adjuster['timestamp']) > 1000:
-                        self.show(self.get_oil_temperature(True))
+                        self.show(self.get_temperature(True, "oil"))
                         self.refresh_rate_adjuster['timestamp'] = time.ticks_ms()
                 switching = not switching
                 start = time.ticks_ms()
                 while time.ticks_diff(time.ticks_ms(), start) < 1000:
                     pass
-                temperature = int(self.get_oil_temperature(False))
+                temperature = int(self.get_temperature(False, "oil"))
             if gone_overheat:
                 logging.car("> Stopped overheating.")
                 self.display.blink_rate(0)
                 self.can_switch_function = True
                 self.displayed_function = self.oil_temperature
-    
-    
         
-    def get_out_temperature(self):
-        voltage = self.adc.read_voltage(3)
-        return round(voltage,2)
     
-    
-    def out_temperature(self):
+    def out_temperature(self): #TODO: <3 degrees alert
         if self.show_function_name(self.button7):
             self.show('OUTEMP') #TODO: Words for outside temp
         else:
-            self.show(str(self.get_out_temperature()))
-        
+            try:
+                self.refresh_rate_adjuster['values'].append(self.get_temperature(False, "out"))
+            except MemoryError:
+                logging.exception(f"> MemoryError in self.refresh_rate_updater. Array lenght: {len(self.refresh_rate_adjuster['value'])}")
+            if time.ticks_diff(time.ticks_ms(), self.refresh_rate_adjuster['timestamp']) > 1000:
+                if len(self.refresh_rate_adjuster['values']) > 2:
+                    rounded_temperature = sum(self.refresh_rate_adjuster['values']) / len(self.refresh_rate_adjuster['values'])
+                    self.show(self.temperature_formatter(rounded_temperature))
+                    self.refresh_rate_adjuster['values'].clear()
+                else:
+                    self.show(self.get_temperature(True, "out"))
+                self.refresh_rate_adjuster['timestamp'] = time.ticks_ms()
         
     def get_voltage(self):
         adc_voltage = self.adc.read_voltage(2)
@@ -1026,10 +1126,10 @@ class OBC:
 # ----------------------------SETTINGS FUNCTIONS-------------------------------
 
     def set_setting(self):
-        digit_mapping = {1:1, -1:-1}
+        digit_mapping = {10,1,-1,-10}
         if self.digit_pressed in digit_mapping:
-            self.setting_index+=digit_mapping[self.digit_pressed]
-            if self.setting_index>9 or self.setting_index < 0:
+            self.setting_index+=self.digit_pressed
+            if self.setting_index>12 or self.setting_index < 0:
                 self.setting_index = 0
             self.digit_pressed = 0
         self.show('SET{:>3}'.format(str(self.setting_index)))
@@ -1246,7 +1346,59 @@ class OBC:
             logging._logging_types = all_logging_types[index]
             self.digit_pressed = 0
             
+    def set_injector_cc(self):
+        if self.show_function_name(self.button9):
+            self.show('INJ. CC')
+        else:
+            injector_cc = access_setting("inj_cc")
+            self.show(f"{injector_cc} CC")
+            digit_mapping = {100,10,1,-1,-10,-100}
+            if self.digit_pressed in digit_mapping:
+                injector_cc += self.digit_pressed
+                if injector_cc < 100:
+                    injector_cc = 800
+                elif injector_cc > 800:
+                    injector_cc = 100
+                access_setting("inj_cc",injector_cc)
+                self.injector_cc = injector_cc
+                self.digit_pressed = 0                
             
+    
+    def set_cyl_nb(self):
+        if self.show_function_name(self.button9):
+            self.show('CYL. NB')
+        else:
+            cyl_nb = access_setting("cyl_nb")
+            self.show("{:<3}CYL".format(cyl_nb))
+            if self.digit_pressed in {-1,1}:
+                possible_cyl_nb = [4, 6, 8, 10, 12,'WTF']
+                index = (possible_cyl_nb.index(cyl_nb) + self.digit_pressed) % len(possible_cyl_nb)
+                cyl_nb = possible_cyl_nb[index]
+                if cyl_nb == 'WTF':
+                    self.show(' WTF  ')
+                    cyl_nb = 4
+                    time.sleep(1)
+                access_setting("cyl_nb", cyl_nb)
+                self.cyl_nb = cyl_nb
+                self.digit_pressed = 0
+                
+                    
+    def set_injector_calibration(self):        
+        if self.show_function_name(self.button9):
+            self.show('INJ.CAL.')
+        else:
+            calibration_factor = access_setting('inj_cal')
+            self.show("{:>6}".format(calibration_factor))
+            if self.digit_pressed in {-100,-10,-1,1,10,100}:
+                calibration_factor += self.digit_pressed
+                if calibration_factor > 999:
+                    calibration_factor = 1
+                elif calibration_factor < 1:
+                    calibration_factor = 1
+                access_setting('inj_cal', calibration_factor)
+                self.inj_cal = calibration_factor
+                self.digit_pressed = 0
+
                    
 # -------------------------------INFINITE-LOOP---------------------------------
 
@@ -1261,9 +1413,9 @@ class OBC:
                 if self.priority_counter == self.priority_interval[2]: #1/40 occurence
                     gc.collect() # freeing memory space
                     self.check_for_last_use()
-                    if self.wiring in ['D.CLOCK','OBC']:
-                        pass
-                        #self.ignition_manager()
+                    if self.wiring in ['D.CLOCK','OBC'] and self.power_on_trigger == 'Ignition':
+                        if not self.get_ignition_status():
+                            self.power_handler()
                     if self.speed_limit_is_active:
                         self.check_for_overspeed()
                     if self.oil_temperature_limit_is_active: 
